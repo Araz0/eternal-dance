@@ -69,7 +69,7 @@ function listUploadedFiles($directory)
     $videoFiles = [];
     $baseDomain = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'];
     if (is_dir($directory)) {
-        $files = glob($directory . '/*.mp4');
+        $files = glob($directory . '*.mp4');
         foreach ($files as $file) {
             $videoFiles[] = str_replace(__DIR__, '', $file); // Relative path
         }
