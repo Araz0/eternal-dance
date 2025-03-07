@@ -4,12 +4,12 @@ This repository acts as a monorepo containing both the frontend and backend code
 
 ## Structure
 
-- `frontend/`: Contains the code for the public website, which will be available under the domain [eternal-dance.art](https://eternal-dance.art).
+- `/`: Contains the code for the public website, which will be available under the domain [eternal-dance.art](https://eternal-dance.art).
 - `backend/`: Contains the server-side code responsible for getting, saving, and uploading videos to the server, as well as handling all related operations.
 
 ## Frontend
 
-The frontend directory includes all the necessary files to build and deploy the public-facing website.
+The root directory includes all the necessary files to build and deploy the public-facing website.
 
 ## Backend
 

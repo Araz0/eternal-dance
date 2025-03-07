@@ -13,7 +13,7 @@ async function uploadVideo(videoPath) {
 
   try {
     // Make the POST request with the form data.
-    const response = await axios.post(BASE_URL + '/upload.php', form, {
+    const response = await axios.post(BASE_URL + '/api.php', form, {
       headers: {
         ...form.getHeaders(),
       },
