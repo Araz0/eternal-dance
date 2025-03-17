@@ -2,7 +2,7 @@ const { recordStream } = require('./record')
 const { uploadVideo } = require('./upload')
 
 const timestamp = Date.now()
-const recordingDurationInSeconds = 180
+const recordingDurationInSeconds = 3
 
 async function runRecordStream() {
   // Example usage (custom parameters):

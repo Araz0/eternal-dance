@@ -75,7 +75,7 @@ function listUploadedFiles($directory)
         }
     }
     echo json_encode([
-        'baseDomain' => $baseDomain,
+        'baseDomain' => $baseDomain . '/exps',
         'files' => $videoFiles
     ], JSON_PRETTY_PRINT);
 }
