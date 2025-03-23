@@ -2,17 +2,17 @@ name: Publish Backend Docker Image
 
 on:
   push:
-    branches:
-      - master
+    branches: ['master']
+  pull_request:
+    branches: ['master']
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       # Log in to Docker Hub
       - name: Log in to Docker Hub
@@ -21,6 +21,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Run the Docker publish script
+      # Build and push the Docker image
       - name: Run Docker publish script
         run: ./backend/docker-publish.sh
