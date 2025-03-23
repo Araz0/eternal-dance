@@ -2,17 +2,20 @@ name: Publish Backend Docker Image
 
 on:
   push:
-    branches: ['master']
+    branches:
+      - master
   pull_request:
-    branches: ['master']
+    branches:
+      - master
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
       # Checkout the repository
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       # Log in to Docker Hub
       - name: Log in to Docker Hub
@@ -22,5 +25,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       # Build and push the Docker image
-      - name: Run Docker publish script
-        run: ./backend/docker-publish.sh
+      - name: Build and Push Docker Image
+        run: |
+          TIMESTAMP=$(date +%s)
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/eternal-dance-backend"
+          docker build -t "$IMAGE_NAME:$TIMESTAMP" -t "$IMAGE_NAME:latest" ./backend
+          docker push "$IMAGE_NAME:$TIMESTAMP"
+          docker push "$IMAGE_NAME:latest"
