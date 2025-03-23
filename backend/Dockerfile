@@ -4,18 +4,12 @@ FROM node:18
 # Set the working directory
 WORKDIR /app
 
+# Install FFmpeg using apt
+RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
+
 # Copy the backend code
 COPY ./streamer ./streamer
 COPY ./apis ./apis
-
-# Copy your custom FFmpeg build into the container
-COPY ./ffmpeg /usr/local/ffmpeg
-
-# Ensure FFmpeg binaries are executable
-RUN chmod +x /usr/local/ffmpeg/ffmpeg /usr/local/ffmpeg/ffprobe
-
-# Add FFmpeg to PATH
-ENV PATH="/usr/local/ffmpeg:$PATH"
 
 # Set default environment variable for RTSP URL
 ENV RTSP_URL=rtsp://127.0.0.1:554/tdvidstream

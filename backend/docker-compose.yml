@@ -1,0 +1,12 @@
+services:
+  eternal-dance:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - RTSP_URL=rtsp://172.16.50.75:554/tdvidstream
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./streamer/streams:/app/streamer/streams
+    restart: unless-stopped
