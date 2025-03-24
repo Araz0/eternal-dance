@@ -2,11 +2,9 @@ name: Publish Backend Docker Image
 
 on:
   push:
-    branches:
-      - master
+    branches: ['main']
   pull_request:
-    branches:
-      - master
+    branches: ['main']
 
 jobs:
   build-and-push:
@@ -28,7 +26,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           TIMESTAMP=$(date +%s)
-          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/eternal-dance-backend"
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/eternal-dance"
           docker build -t "$IMAGE_NAME:$TIMESTAMP" -t "$IMAGE_NAME:latest" ./backend
           docker push "$IMAGE_NAME:$TIMESTAMP"
           docker push "$IMAGE_NAME:latest"
