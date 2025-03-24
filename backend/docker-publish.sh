@@ -11,7 +11,7 @@ fi
 
 # Generate a timestamp tag
 TIMESTAMP=$(date +%s)
-IMAGE_NAME="$DOCKER_USERNAME/eternal-dance-backend"
+IMAGE_NAME="$DOCKER_USERNAME/eternal-dance"
 
 # Build the Docker image with both timestamp and latest tags
 docker build -t "$IMAGE_NAME:$TIMESTAMP" -t "$IMAGE_NAME:latest" ./backend
