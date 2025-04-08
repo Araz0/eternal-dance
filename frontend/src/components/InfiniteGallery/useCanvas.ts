@@ -11,6 +11,9 @@ export type UseCanvasProps = {
   minZoom?: number // default 0.5
   maxZoom?: number // default 2
   initialScale?: number // default 0.8
+  showGridLines?: boolean // default false
+  showGridIdentifiers?: boolean // default false
+  randomizePlacement?: boolean // default false
 }
 
 interface Bounds {
@@ -39,6 +42,9 @@ export function useCanvas({
   minZoom = 0.5,
   maxZoom = 2,
   initialScale = 0.8,
+  showGridLines = false,
+  showGridIdentifiers = false,
+  randomizePlacement = true,
 }: UseCanvasProps) {
   const thumbWidth = tileWidth - tilePadding
   const thumbHeight = tileHeight - tilePadding
@@ -72,6 +78,9 @@ export function useCanvas({
       -offsetYRef.current / (tileHeight * scaleRef.current)
     )
 
+    ctx.fillStyle = '#222'
+    ctx.fillRect(0, 0, width, height)
+
     // Draw grid cells.
     for (let row = startRow; row < startRow + rows; row++) {
       for (let col = startCol; col < startCol + cols; col++) {
@@ -81,23 +90,27 @@ export function useCanvas({
         ctx.fillRect(
           x,
           y,
-          tileWidth * scaleRef.current - 1,
-          tileHeight * scaleRef.current - 1
-        )
-        ctx.strokeStyle = '#555'
-        ctx.strokeRect(
-          x,
-          y,
           tileWidth * scaleRef.current,
           tileHeight * scaleRef.current
         )
-        ctx.fillStyle = '#888'
-        ctx.font = `${16 * scaleRef.current}px sans-serif`
-        ctx.fillText(
-          `(${col}, ${row})`,
-          x + 10 * scaleRef.current,
-          y + 25 * scaleRef.current
-        )
+        if (showGridLines) {
+          ctx.strokeStyle = '#555'
+          ctx.strokeRect(
+            x,
+            y,
+            tileWidth * scaleRef.current,
+            tileHeight * scaleRef.current
+          )
+        }
+        if (showGridIdentifiers) {
+          ctx.fillStyle = '#888'
+          ctx.font = `${16 * scaleRef.current}px sans-serif`
+          ctx.fillText(
+            `(${col}, ${row})`,
+            x + 10 * scaleRef.current,
+            y + 25 * scaleRef.current
+          )
+        }
       }
     }
 
@@ -108,8 +121,24 @@ export function useCanvas({
         item.row * tileHeight * scaleRef.current + offsetYRef.current
       const imgW = thumbWidth * scaleRef.current
       const imgH = thumbHeight * scaleRef.current
-      const centerX = cellX + (tileWidth * scaleRef.current - imgW) / 2
-      const centerY = cellY + (tileHeight * scaleRef.current - imgH) / 2
+
+      // Calculate a pseudo-random offset based on the item's index
+      const randomOffsetX = randomizePlacement
+        ? ((item.index % 10) - 5) *
+          (tileWidth * scaleRef.current * 0.02) *
+          (item.index % 2 === 0 ? 1 : -1)
+        : 0
+      const randomOffsetY = randomizePlacement
+        ? ((item.index % 7) - 3) *
+          (tileHeight * scaleRef.current * 0.02) *
+          (item.index % 3 === 0 ? 1 : -1)
+        : 0
+
+      const centerX =
+        cellX + (tileWidth * scaleRef.current - imgW) / 2 + randomOffsetX
+      const centerY =
+        cellY + (tileHeight * scaleRef.current - imgH) / 2 + randomOffsetY
+
       item._bounds = { x: centerX, y: centerY, w: imgW, h: imgH }
       try {
         ctx.drawImage(item.thumbnail, centerX, centerY, imgW, imgH)
@@ -118,7 +147,16 @@ export function useCanvas({
         console.error('Error drawing image:', error, item)
       }
     })
-  }, [canvasRef, tileWidth, tileHeight, thumbWidth, thumbHeight])
+  }, [
+    canvasRef,
+    showGridIdentifiers,
+    showGridLines,
+    thumbHeight,
+    thumbWidth,
+    tileHeight,
+    tileWidth,
+    randomizePlacement,
+  ])
 
   // Generate positions in a spiral layout with random skipping.
   const generateSpiralPositions = useCallback(
