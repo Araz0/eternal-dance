@@ -13,7 +13,7 @@ export type UseCanvasProps = {
   initialScale?: number // default 0.8
   showGridLines?: boolean // default false
   showGridIdentifiers?: boolean // default false
-  randomizePlacement?: boolean // default false
+  randomizePlacement?: boolean // default true
 }
 
 interface Bounds {
@@ -51,7 +51,7 @@ export function useCanvas({
 
   // Ref to hold gallery items created on image load.
   const itemsRef = useRef<GalleryItem[]>([])
-  // Refs to handle panning/zooming
+  // Refs to handle panning/zooming.
   const scaleRef = useRef<number>(initialScale)
   const offsetXRef = useRef<number>(0)
   const offsetYRef = useRef<number>(0)
@@ -78,6 +78,7 @@ export function useCanvas({
       -offsetYRef.current / (tileHeight * scaleRef.current)
     )
 
+    // Fill background.
     ctx.fillStyle = '#222'
     ctx.fillRect(0, 0, width, height)
 
@@ -122,7 +123,7 @@ export function useCanvas({
       const imgW = thumbWidth * scaleRef.current
       const imgH = thumbHeight * scaleRef.current
 
-      // Calculate a pseudo-random offset based on the item's index
+      // Calculate a pseudo-random offset based on the item's index.
       const randomOffsetX = randomizePlacement
         ? ((item.index % 10) - 5) *
           (tileWidth * scaleRef.current * 0.02) *
@@ -134,16 +135,17 @@ export function useCanvas({
           (item.index % 3 === 0 ? 1 : -1)
         : 0
 
+      // Here we compute the drawn image's top-left position.
       const centerX =
         cellX + (tileWidth * scaleRef.current - imgW) / 2 + randomOffsetX
       const centerY =
         cellY + (tileHeight * scaleRef.current - imgH) / 2 + randomOffsetY
 
+      // Save the drawn image bounds.
       item._bounds = { x: centerX, y: centerY, w: imgW, h: imgH }
       try {
         ctx.drawImage(item.thumbnail, centerX, centerY, imgW, imgH)
       } catch (error) {
-        // Silently catch errors (for example, if image is not ready).
         console.error('Error drawing image:', error, item)
       }
     })
@@ -306,6 +308,28 @@ export function useCanvas({
     drawGrid()
   }, [canvasRef, tileWidth, tileHeight, drawGrid])
 
+  // New: Function to center the canvas on a specific item by its index.
+  // Instead of using the drawn image bounds (which include random offsets),
+  // this calculates the target based on the grid cell's center.
+  const centerOnItem = useCallback(
+    (index: number) => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const item = itemsRef.current.find((it) => it.index === index)
+      if (!item) return
+      const currentScale = scaleRef.current
+      // Calculate the center of the cell (tile) for this item.
+      const tileCenterX =
+        item.col * tileWidth * currentScale + (tileWidth * currentScale) / 2
+      const tileCenterY =
+        item.row * tileHeight * currentScale + (tileHeight * currentScale) / 2
+      offsetXRef.current = canvas.width / 2 - tileCenterX
+      offsetYRef.current = canvas.height / 2 - tileCenterY
+      drawGrid()
+    },
+    [canvasRef, drawGrid, tileWidth, tileHeight]
+  )
+
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -340,6 +364,6 @@ export function useCanvas({
     handleCanvasClick,
   ])
 
-  // Optionally return a redraw method.
-  return { redraw: drawGrid }
+  // Expose the redraw function and centerOnItem.
+  return { redraw: drawGrid, centerOnItem }
 }
