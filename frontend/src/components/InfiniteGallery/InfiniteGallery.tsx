@@ -1,66 +1,53 @@
-import React, { useRef, useEffect, useState, memo } from 'react'
+import React, { useRef, useState, useCallback, memo } from 'react'
 import { useCanvas } from './useCanvas'
 
-const _exps = [1, 2, 3, 4]
+// Default thumbnail URLs (update these paths as needed)
+const defaultThumbnails = [
+  '/thumbnails/1.jpg',
+  '/thumbnails/2.jpg',
+  '/thumbnails/3.jpg',
+  '/thumbnails/4.jpg',
+]
+
 export interface InfiniteGalleryProps {
-  // Array of IDs or values which will be used to load thumbnails/videos.
-  exps: number[]
-  // Optional configuration (if you want to override the defaults).
-  tileWidth?: number
-  tileHeight?: number
-  tilePadding?: number
-  skipChance?: number
-  minZoom?: number
-  maxZoom?: number
-  initialScale?: number
+  thumbnails?: string[]
 }
 
 const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({
-  exps = _exps,
-  tileWidth,
-  tileHeight,
-  tilePadding,
-  skipChance,
-  minZoom,
-  maxZoom,
-  initialScale,
+  thumbnails = defaultThumbnails,
 }) => {
-  // Create a ref for the canvas element.
+  // Create the canvas ref.
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  // Use the custom hook by passing the canvas ref and configuration.
-  const { selectedIndex, setSelectedIndex } = useCanvas({
-    canvasRef,
-    exps,
-    tileWidth,
-    tileHeight,
-    tilePadding,
-    skipChance,
-    minZoom,
-    maxZoom,
-    initialScale,
-  })
-
-  // States to manage the overlay (video player) and video source.
+  // State for managing the overlay and video source.
   const [showOverlay, setShowOverlay] = useState(false)
   const [videoSrc, setVideoSrc] = useState<string | null>(null)
 
-  // When an item is clicked (selectedIndex updated by the hook), configure the video source.
-  useEffect(() => {
-    if (selectedIndex !== null) {
-      // Here we assume the video URL follows a convention.
-      const src = `/videos/${exps[selectedIndex]}.mp4`
+  // Callback to execute when an item is clicked.
+  const handleItemClick = useCallback(
+    (index: number) => {
+      // For example, assume the video file is named following the thumbnail:
+      // e.g. if thumbnail is '/thumbnails/1.jpg' then video is '/videos/1.mp4'
+      const thumbName = thumbnails[index].split('/').pop()
+      const videoId = thumbName ? thumbName.split('.')[0] : ''
+      const src = `/videos/${videoId}.mp4`
       setVideoSrc(src)
       setShowOverlay(true)
-    }
-  }, [selectedIndex, exps])
+    },
+    [thumbnails]
+  )
 
-  // Close handler for the overlay.
-  const handleOverlayClose = () => {
+  // Call the custom hook.
+  useCanvas({
+    canvasRef,
+    thumbnails,
+    onItemClick: handleItemClick,
+  })
+
+  // Overlay close handler.
+  const handleOverlayClose = useCallback(() => {
     setShowOverlay(false)
     setVideoSrc(null)
-    // Clear the selected index for future clicks.
-    setSelectedIndex(null)
-  }
+  }, [])
 
   return (
     <div style={{ position: 'relative' }}>
@@ -79,6 +66,7 @@ const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({
             justifyContent: 'center',
             zIndex: 10,
           }}
+          onClick={handleOverlayClose}
         >
           <div
             style={{
