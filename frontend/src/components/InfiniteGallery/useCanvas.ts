@@ -337,19 +337,19 @@ export function useCanvas({
     loadThumbnails()
     window.addEventListener('resize', resizeCanvas)
     canvas.addEventListener('wheel', handleWheel)
-    canvas.addEventListener('mousedown', handleMouseDown)
-    canvas.addEventListener('mousemove', handleMouseMove)
-    canvas.addEventListener('mouseup', handleMouseUp)
-    canvas.addEventListener('mouseleave', handleMouseLeave)
+    canvas.addEventListener('pointerdown', handleMouseDown)
+    canvas.addEventListener('pointermove', handleMouseMove)
+    canvas.addEventListener('pointerup', handleMouseUp)
+    canvas.addEventListener('pointerleave', handleMouseLeave)
     canvas.addEventListener('click', handleCanvasClick)
 
     return () => {
       window.removeEventListener('resize', resizeCanvas)
       canvas.removeEventListener('wheel', handleWheel)
-      canvas.removeEventListener('mousedown', handleMouseDown)
-      canvas.removeEventListener('mousemove', handleMouseMove)
-      canvas.removeEventListener('mouseup', handleMouseUp)
-      canvas.removeEventListener('mouseleave', handleMouseLeave)
+      canvas.removeEventListener('pointerdown', handleMouseDown)
+      canvas.removeEventListener('pointermove', handleMouseMove)
+      canvas.removeEventListener('pointerup', handleMouseUp)
+      canvas.removeEventListener('pointerleave', handleMouseLeave)
       canvas.removeEventListener('click', handleCanvasClick)
     }
   }, [
