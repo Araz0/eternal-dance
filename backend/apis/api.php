@@ -1,6 +1,12 @@
 <?php
 header('Content-Type: application/json');
-
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 // Configuration
 $config = [
     'maxFileSize' => 80 * 1024 * 1024, // Maximum allowed file size in bytes (80MB)
@@ -70,7 +76,7 @@ function listUploadedFiles($directory)
 {
     $filesList = [];
     $baseDomain = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'];
-    $basePath = rtrim($baseDomain . '/exps', '/');
+    $basePath = rtrim($baseDomain, '/');
 
     if (is_dir($directory)) {
         $videoFiles = glob($directory . '/*.mp4');

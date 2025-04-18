@@ -1,21 +1,32 @@
 import React, { useRef, useState, useCallback, memo } from 'react'
 import { useCanvas } from './useCanvas'
 
-// Default thumbnail URLs (update these paths as needed)
-const defaultThumbnails = [
-  '/thumbnails/1.jpg',
-  '/thumbnails/2.jpg',
-  '/thumbnails/3.jpg',
-  '/thumbnails/4.jpg',
-]
-
-export interface InfiniteGalleryProps {
-  thumbnails?: string[]
+// Define the structure of the new prop.
+export interface FileItem {
+  id: number
+  video: string
+  thumbnail: string
 }
 
-const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({
-  thumbnails = defaultThumbnails,
-}) => {
+export interface InfiniteGalleryProps {
+  items: FileItem[]
+}
+
+// // Default items (update these paths as needed)
+// const defaultitems: FileItem[] = [
+//   {
+//     id: 1,
+//     video: '/videos/1.mp4',
+//     thumbnail: '/thumbnails/1.jpg',
+//   },
+//   {
+//     id: 2,
+//     video: '/videos/2.mp4',
+//     thumbnail: '/thumbnails/2.jpg',
+//   },
+// ]
+
+const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({ items }) => {
   // Create the canvas ref.
   const canvasRef = useRef<HTMLCanvasElement>(null)
   // State for managing the overlay and video source.
@@ -27,19 +38,17 @@ const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({
   // Callback to execute when an item is clicked.
   const handleItemClick = useCallback(
     (index: number) => {
-      const thumbName = thumbnails[index].split('/').pop()
-      const videoId = thumbName ? thumbName.split('.')[0] : ''
-      const src = `/videos/${videoId}.mp4`
+      const src = items[index].video
       setVideoSrc(src)
       setShowOverlay(true)
     },
-    [thumbnails]
+    [items]
   )
 
   // Get centerOnItem function from the custom hook.
   const { centerOnItem } = useCanvas({
     canvasRef,
-    thumbnails,
+    thumbnails: items.map((file) => file.thumbnail),
     onItemClick: handleItemClick,
   })
 
@@ -49,18 +58,18 @@ const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({
     setVideoSrc(null)
   }, [])
 
-  // Search handler: when the user searches, locate the first thumbnail matching the query and center it.
+  // Search handler: when the user searches, locate the first file matching the query and center it.
   const handleSearch = useCallback(() => {
     const query = searchQuery.trim().toLowerCase()
     if (!query) return
 
-    const foundIndex = thumbnails.findIndex((src) =>
-      src.toLowerCase().includes(query)
+    const foundIndex = items.findIndex((file) =>
+      file.thumbnail.toLowerCase().includes(query)
     )
     if (foundIndex !== -1) {
       centerOnItem(foundIndex)
     }
-  }, [searchQuery, thumbnails, centerOnItem])
+  }, [searchQuery, items, centerOnItem])
 
   return (
     <div style={{ position: 'relative' }}>
@@ -120,7 +129,7 @@ const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({
       >
         <input
           type='text'
-          placeholder='Search by src...'
+          placeholder='Search by thumbnail URL...'
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           style={{
@@ -158,4 +167,3 @@ const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({
 }
 
 export const InfiniteGallery = memo(InfiniteGalleryRaw)
-export default InfiniteGallery
