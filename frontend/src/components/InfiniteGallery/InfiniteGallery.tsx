@@ -1,5 +1,7 @@
 import React, { useRef, useState, useCallback, memo } from 'react'
 import { useCanvas } from './useCanvas'
+import { VideoOverlay } from './VideoOverlay'
+import { SearchInput } from './SearchInput'
 
 // Define the structure of the new prop.
 export interface FileItem {
@@ -11,20 +13,6 @@ export interface FileItem {
 export interface InfiniteGalleryProps {
   items: FileItem[]
 }
-
-// // Default items (update these paths as needed)
-// const defaultitems: FileItem[] = [
-//   {
-//     id: 1,
-//     video: '/videos/1.mp4',
-//     thumbnail: '/thumbnails/1.jpg',
-//   },
-//   {
-//     id: 2,
-//     video: '/videos/2.mp4',
-//     thumbnail: '/thumbnails/2.jpg',
-//   },
-// ]
 
 const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({ items }) => {
   // Create the canvas ref.
@@ -74,94 +62,16 @@ const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({ items }) => {
   return (
     <div style={{ position: 'relative' }}>
       <canvas ref={canvasRef} style={{ display: 'block' }} />
-      {showOverlay && videoSrc && (
-        <div
-          style={{
-            display: 'flex',
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            background: 'rgba(0, 0, 0, 0.8)',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10,
-          }}
-          onClick={handleOverlayClose}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              top: 10,
-              right: 20,
-              fontSize: 24,
-              color: 'white',
-              cursor: 'pointer',
-            }}
-            onClick={handleOverlayClose}
-          >
-            ✖
-          </div>
-          <video
-            id='videoPlayer'
-            src={videoSrc}
-            controls
-            autoPlay
-            style={{
-              background: 'black',
-              maxWidth: '90vw',
-              maxHeight: '90vh',
-            }}
-          />
-        </div>
-      )}
-      <div
-        style={{
-          position: 'fixed',
-          bottom: 20,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 20,
-          display: 'flex',
-          gap: '8px',
-        }}
-      >
-        <input
-          type='text'
-          placeholder='Search by thumbnail URL...'
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={{
-            padding: '10px 14px',
-            fontSize: '16px',
-            border: 'none',
-            borderRadius: '4px',
-            backgroundColor: '#333', // dark background
-            color: '#eee',
-            outline: 'none',
-            width: '300px',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
-          }}
-        />
-        <button
-          onClick={handleSearch}
-          style={{
-            padding: '10px 16px',
-            fontSize: '16px',
-            border: 'none',
-            borderRadius: '4px',
-            backgroundColor: '#555', // maintain dark theme
-            color: '#fff',
-            cursor: 'pointer',
-            transition: 'background-color 0.2s',
-          }}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#666')}
-          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#555')}
-        >
-          Search
-        </button>
-      </div>
+      <VideoOverlay
+        videoSrc={videoSrc ? videoSrc : ''}
+        showOverlay={showOverlay}
+        handleOverlayClose={handleOverlayClose}
+      />
+      <SearchInput
+        onSearchClick={handleSearch}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
     </div>
   )
 }
