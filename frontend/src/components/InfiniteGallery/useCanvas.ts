@@ -38,13 +38,13 @@ export function useCanvas({
   tileWidth = 300,
   tileHeight = 400,
   tilePadding = 80,
-  skipChance = 0.3,
+  skipChance = 0.0,
   minZoom = 0.5,
   maxZoom = 2,
   initialScale = 0.8,
-  showGridLines = false,
-  showGridIdentifiers = false,
-  randomizePlacement = true,
+  showGridLines = true,
+  showGridIdentifiers = true,
+  randomizePlacement = false,
 }: UseCanvasProps) {
   const thumbWidth = tileWidth - tilePadding
   const thumbHeight = tileHeight - tilePadding

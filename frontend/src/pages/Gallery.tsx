@@ -3,15 +3,17 @@ import { useEffect, useState } from 'react'
 
 export const Gallery = () => {
   const [galleryData, setGalleryData] = useState<FileItem[]>([])
-
+  const [loading, setLoading] = useState(true)
   useEffect(() => {
     const fetchGalleryData = async () => {
       try {
         const response = await fetch('https://api.eternal-dance.art/api.php')
-        const data = await response.json()
-        setGalleryData(data.files || ([] as FileItem[]))
+        const data = (await response.json()) as { files: FileItem[] }
+        setGalleryData(data.files || [])
       } catch (error) {
         console.error('Error fetching gallery data:', error)
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -20,7 +22,7 @@ export const Gallery = () => {
 
   return (
     <PageContainer>
-      <InfiniteGallery items={galleryData} />
+      {!loading && <InfiniteGallery items={galleryData} />}
     </PageContainer>
   )
 }
