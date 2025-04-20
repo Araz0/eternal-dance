@@ -1,57 +1,66 @@
-import { memo } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
+import styles from './VideoOverlay.module.css'
+import { CloseIcon } from '../icons'
 
 type VideoOverlayProps = {
   videoSrc: string
   showOverlay: boolean
   handleOverlayClose: () => void
+  isMobile?: boolean
 }
 
 const VideoOverlayRaw = ({
   videoSrc,
   showOverlay,
   handleOverlayClose,
+  isMobile = false,
 }: VideoOverlayProps) => {
-  if (!showOverlay) return
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    if (showOverlay) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [showOverlay])
+
+  const handleTimeUpdate = () => {
+    if (!isMobile) return
+    if (videoRef.current) {
+      const currentTime = videoRef.current.currentTime
+      const duration = videoRef.current.duration
+      setProgress((currentTime / duration) * 100)
+    }
+  }
+
+  if (!showOverlay) return null
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        background: 'rgba(0, 0, 0, 0.8)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 10,
-      }}
-      onClick={handleOverlayClose}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          top: 10,
-          right: 20,
-          fontSize: 24,
-          color: 'white',
-          cursor: 'pointer',
-        }}
-        onClick={handleOverlayClose}
-      >
-        ✖
+    <div className={styles.overlay} onClick={handleOverlayClose}>
+      <div className={styles.closeButton} onClick={handleOverlayClose}>
+        <CloseIcon size={32} color='#ccc' />
       </div>
-      <video
-        id='videoPlayer'
-        src={videoSrc}
-        controls
-        autoPlay
-        style={{
-          background: 'black',
-          maxWidth: '90vw',
-          maxHeight: '90vh',
-        }}
-      />
+      <div className={styles.videoContainer}>
+        <video
+          id='videoPlayer'
+          ref={videoRef}
+          src={videoSrc}
+          controls
+          autoPlay
+          loop
+          className={styles.videoPlayer}
+          onTimeUpdate={handleTimeUpdate}
+        />
+        {isMobile && (
+          <progress className={styles.progressBar} value={progress} max='100' />
+        )}
+      </div>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { SearchIcon } from './SearchIcon'
+import { SearchIcon } from '../icons'
 import styles from './style.module.css'
 
 type SearchInputProps = {
@@ -23,7 +23,7 @@ const SearchInputRaw = ({
         className={styles.searchInput}
       />
       <button onClick={onSearchClick} className={styles.searchButton}>
-        <SearchIcon color='#ccc' />
+        <SearchIcon color='#ccc' size={22} />
       </button>
     </div>
   )

@@ -77,6 +77,7 @@ export const Gallery = () => {
         videoSrc={videoSrc ? videoSrc : ''}
         showOverlay={showOverlay}
         handleOverlayClose={handleOverlayClose}
+        isMobile={isMobileDevice}
       />
     </PageContainer>
   )
