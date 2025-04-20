@@ -8,7 +8,7 @@ import { exec } from 'child_process'
 export function recordStream({ rtspUrl, duration, outputFile } = {}) {
   console.log(`Using RTSP URL: ${rtspUrl}`) // Log the RTSP URL being used
   return new Promise((resolve) => {
-    const command = `ffmpeg -rtsp_transport tcp -i "${rtspUrl}" -t ${duration} -c copy ${outputFile}`
+    const command = `ffmpeg -rtsp_transport tcp -i "${rtspUrl}" -t ${duration} -c:v copy -c:a copy ${outputFile}`
 
     console.log('Recording started...')
     exec(command, (error, stdout, stderr) => {
