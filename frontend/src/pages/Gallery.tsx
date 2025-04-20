@@ -1,7 +1,16 @@
-import { PageContainer, InfiniteGallery, VideoOverlay } from '../components/'
+import {
+  PageContainer,
+  InfiniteGallery,
+  VideoOverlay,
+  ReelsGallery,
+} from '../components/'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-export interface FileItem {
+const isMobileDevice = /Mobi|Android|iPhone|iPad|iPod/i.test(
+  navigator.userAgent
+)
+
+export type FileItem = {
   id: number
   video: string
   thumbnail: string
@@ -13,6 +22,7 @@ export const Gallery = () => {
 
   const [galleryData, setGalleryData] = useState<FileItem[]>([])
   const [loading, setLoading] = useState(true)
+
   useEffect(() => {
     const fetchGalleryData = async () => {
       try {
@@ -54,12 +64,15 @@ export const Gallery = () => {
 
   return (
     <PageContainer>
-      {!loading && (
-        <InfiniteGallery
-          thumbnails={thumbnails}
-          onItemClick={handleItemClick}
-        />
-      )}
+      {!loading &&
+        (isMobileDevice ? (
+          <ReelsGallery reels={memoizedItems} onItemClick={handleItemClick} />
+        ) : (
+          <InfiniteGallery
+            thumbnails={thumbnails}
+            onItemClick={handleItemClick}
+          />
+        ))}
       <VideoOverlay
         videoSrc={videoSrc ? videoSrc : ''}
         showOverlay={showOverlay}
