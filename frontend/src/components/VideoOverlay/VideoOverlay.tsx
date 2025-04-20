@@ -43,9 +43,6 @@ const VideoOverlayRaw = ({
 
   return (
     <div className={styles.overlay} onClick={handleOverlayClose}>
-      <div className={styles.closeButton} onClick={handleOverlayClose}>
-        <CloseIcon size={32} color='#ccc' />
-      </div>
       <div className={styles.videoContainer}>
         <video
           id='videoPlayer'
@@ -54,12 +51,17 @@ const VideoOverlayRaw = ({
           controls
           autoPlay
           loop
-          className={styles.videoPlayer}
+          className={
+            isMobile ? styles.videoPlayerFullscreen : styles.videoPlayer
+          }
           onTimeUpdate={handleTimeUpdate}
         />
         {isMobile && (
           <progress className={styles.progressBar} value={progress} max='100' />
         )}
+      </div>
+      <div className={styles.closeButton} onClick={handleOverlayClose}>
+        <CloseIcon size={32} color='#ccc' />
       </div>
     </div>
   )
