@@ -21,8 +21,6 @@ const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({
     onItemClick,
   })
 
-  console.log('## ~ thumbnails:', thumbnails)
-
   // Search handler: when the user searches, locate the first file matching the query and center it.
   const handleSearch = useCallback(() => {
     const query = searchQuery.trim().toLowerCase()

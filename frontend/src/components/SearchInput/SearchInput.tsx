@@ -1,4 +1,6 @@
 import { memo } from 'react'
+import { SearchIcon } from './SearchIcon'
+import styles from './style.module.css'
 
 type SearchInputProps = {
   searchQuery: string
@@ -12,50 +14,16 @@ const SearchInputRaw = ({
   onSearchClick,
 }: SearchInputProps) => {
   return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: 20,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 20,
-        display: 'flex',
-        gap: '8px',
-      }}
-    >
+    <div className={styles.searchContainer}>
       <input
         type='text'
-        placeholder='Search by thumbnail URL...'
+        placeholder='Search by id'
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        style={{
-          padding: '10px 14px',
-          fontSize: '16px',
-          border: 'none',
-          borderRadius: '4px',
-          backgroundColor: '#333', // dark background
-          color: '#eee',
-          outline: 'none',
-          width: '300px',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
-        }}
+        className={styles.searchInput}
       />
-      <button
-        onClick={onSearchClick}
-        style={{
-          padding: '10px 16px',
-          fontSize: '16px',
-          border: 'none',
-          borderRadius: '4px',
-          backgroundColor: '#555', // maintain dark theme
-          color: '#fff',
-          cursor: 'pointer',
-          transition: 'background-color 0.2s',
-        }}
-        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#666')}
-        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#555')}
-      >
-        Search
+      <button onClick={onSearchClick} className={styles.searchButton}>
+        <SearchIcon color='#ccc' />
       </button>
     </div>
   )
