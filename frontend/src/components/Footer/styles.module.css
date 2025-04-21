@@ -1,0 +1,38 @@
+.footer {
+    width: 100vw;
+    min-height: fit-content;
+    color: white;
+    padding-bottom: 5vh;
+}
+
+.footer span{
+    font-size: 6rem;
+    display: block;
+    text-transform: uppercase;
+    font-weight: 800;
+    text-align: center;
+}
+
+.footer ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    column-gap: 5vw;
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.footer ul li {
+    text-transform: uppercase;
+}
+
+.footer ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+}
+
+.footer ul li a:hover {
+    text-decoration: underline;
+}

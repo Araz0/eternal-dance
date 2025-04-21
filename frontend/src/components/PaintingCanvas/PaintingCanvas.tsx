@@ -18,7 +18,7 @@ const PaintingCanvasRaw = () => {
       let hue = 0;
 
       p.setup = () => {
-        const canvas = p.createCanvas(p.windowWidth, p.windowHeight);
+        const canvas = p.createCanvas(p.windowWidth, p.windowHeight*0.9);
         canvas.parent(containerRef.current!);
         p.colorMode(p.HSL, 360, 100, 100, 100);
         p.background(0, 0, 0);
@@ -46,7 +46,7 @@ const PaintingCanvasRaw = () => {
       };
 
       p.windowResized = () => {
-        p.resizeCanvas(p.windowWidth, p.windowHeight);
+        p.resizeCanvas(p.windowWidth, p.windowHeight*0.9);
       };
     }, containerRef.current);
 

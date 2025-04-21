@@ -8,8 +8,8 @@
 }
 
 .overlay {
-    position: absolute;
-    top: 10vh;
+    position: relative;
+    top: 0vh;
     left: 0;
     width: 100vw;
     height: 90vh;

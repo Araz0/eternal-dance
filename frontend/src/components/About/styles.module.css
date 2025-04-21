@@ -1,0 +1,19 @@
+.about {
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: white;
+    padding: 5vw 2vw;
+}
+
+.about p {
+    font-size: 1.5rem;
+    line-height: 1.6rem;
+    max-width: 40vw;
+}
+
+h2 {
+    text-transform: uppercase;
+    font-weight: 800;
+}
