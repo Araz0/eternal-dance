@@ -1,41 +1,59 @@
-const { recordStream } = require('./record')
-const { uploadVideo } = require('./upload')
-const fs = require('fs')
+import fs from 'fs'
+import { recordStream } from './record.js'
+import { uploadVideo, uploadImage } from './upload.js'
+// import { UDPServer } from './touchdesigner-server.js'
+import { Highlighter } from './Highlighter.js'
 
 const timestamp = Date.now()
-const recordingDurationInSeconds = 3
+const recordingDurationInSeconds = 30
 
 // Ensure the streams directory exists
 if (!fs.existsSync('./streams')) {
   fs.mkdirSync('./streams', { recursive: true })
 }
 
-async function runRecordStream() {
-  // Example usage (custom parameters):
-  const videoPath = await recordStream({
-    rtspUrl: process.env.RTSP_URL || 'rtsp://127.0.0.1:554/tdvidstream',
-    duration: recordingDurationInSeconds,
-    outputFile: './streams/' + timestamp + '.mp4',
+console.time('recordStream')
+// timer running on the side asynchronously
+const recordingTimer = setInterval(() => {
+  const elapsedTime = Math.floor((Date.now() - timestamp) / 1000)
+  console.log(`${elapsedTime} seconds elapsed`)
+}, 1000)
+
+const videoPath = await recordStream({
+  rtspUrl: process.env.RTSP_URL || 'rtsp://127.0.0.1:554/tdvidstream',
+  duration: recordingDurationInSeconds,
+  outputFile: './streams/' + timestamp + '.mp4',
+})
+console.timeEnd('recordStream')
+console.log('Video saved to:', videoPath)
+
+const highlighter = new Highlighter(videoPath)
+try {
+  const { finalVideo, thumbnail, croppedVideo, croppedThumbnail } =
+    await highlighter.highlight()
+  console.log('local paths:', {
+    finalVideo,
+    thumbnail,
+    croppedVideo,
+    croppedThumbnail,
   })
-  console.log('Video saved to:', videoPath)
 
-  try {
-    console.log('will try to upload video now:', videoPath)
-    // Upload the recorded video.
-    const onlineLink = await uploadVideo(videoPath)
-    console.log('Video uploaded:', onlineLink)
-  } catch (error) {
-    console.error('Error uploading video file:', error)
-  }
+  console.log('Uploading...')
+  const onlineReelLink = await uploadVideo(croppedVideo)
 
-  return videoPath
+  console.log('## ~ onlineReelLink:', onlineReelLink)
+
+  const onlineThumbnailLink = await uploadImage(croppedThumbnail)
+
+  console.log('## ~ onlineThumbnailLink:', onlineThumbnailLink)
+} catch (error) {
+  console.error('Error:', error)
 }
 
-console.log(
-  `Recording video stream with duration of ${recordingDurationInSeconds} seconds...`
-)
+// // Initialize the UDP server
+// const udpServer = new UDPServer('127.0.0.1', 41234) // Replace with your desired IP and port
 
-console.time('runRecordStream')
-runRecordStream().then(() => {
-  console.timeEnd('runRecordStream')
-})
+// udpServer.onCallback(async (currentValue) => {
+
+// })
+// udpServer.start()

@@ -1,11 +1,17 @@
 <?php
 header('Content-Type: application/json');
-
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 // Configuration
 $config = [
     'maxFileSize' => 80 * 1024 * 1024, // Maximum allowed file size in bytes (80MB)
-    'allowedExtensions' => ['mp4'], // Allowed video file extensions
-    'uploadDir' => __DIR__ . '/uploads/' // Directory to save uploaded files
+    'allowedExtensions' => ['mp4', 'jpg'], // Allowed file extensions
+    'uploadDir' => __DIR__ . '/exps/' // Directory to save uploaded files
 ];
 
 // Ensure the upload directory exists
@@ -26,12 +32,15 @@ if ($requestMethod === 'POST') {
 
 function handleFileUpload($config)
 {
-    if (!isset($_FILES['video'])) {
+    // Check if a file is uploaded under 'file', 'image', or 'video'
+    $fileKey = isset($_FILES['file']) ? 'file' : (isset($_FILES['image']) ? 'image' : (isset($_FILES['video']) ? 'video' : null));
+
+    if (!$fileKey) {
         echo json_encode(['status' => 'error', 'message' => 'No file uploaded.']);
         exit;
     }
 
-    $file = $_FILES['video'];
+    $file = $_FILES[$fileKey];
 
     if ($file['error'] !== UPLOAD_ERR_OK) {
         echo json_encode(['status' => 'error', 'message' => 'File upload error.']);
@@ -49,8 +58,8 @@ function handleFileUpload($config)
         exit;
     }
 
-    $targetFileName = uniqid('video_', true) . '.' . $fileExtension;
-    $targetFilePath = $config['uploadDir'] . $targetFileName;
+    $originalFileName = basename($file['name']);
+    $targetFilePath = $config['uploadDir'] . $originalFileName;
 
     if (!move_uploaded_file($file['tmp_name'], $targetFilePath)) {
         echo json_encode(['status' => 'error', 'message' => 'Failed to move uploaded file.']);
@@ -60,23 +69,55 @@ function handleFileUpload($config)
     echo json_encode([
         'status' => 'success',
         'message' => 'File uploaded successfully.',
-        'file' => $targetFileName,
+        'file' => $originalFileName,
     ]);
 }
-
 function listUploadedFiles($directory)
 {
-    $videoFiles = [];
+    $filesList = [];
     $baseDomain = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'];
+    $basePath = rtrim($baseDomain, '/');
+
     if (is_dir($directory)) {
-        $files = glob($directory . '*.mp4');
-        foreach ($files as $file) {
-            $videoFiles[] = str_replace(__DIR__, '', $file); // Relative path
+        $videoFiles = glob($directory . '/*.mp4');
+        $imageFiles = glob($directory . '/*.jpg');
+
+        $fileMap = [];
+
+        // Map video files
+        foreach ($videoFiles as $video) {
+            $fileName = pathinfo($video, PATHINFO_FILENAME); // e.g., "1744988986691_cropped"
+            if (preg_match('/^(\d+)_cropped$/', $fileName, $matches)) {
+                $id = $matches[1];
+                $relativePath = str_replace($_SERVER['DOCUMENT_ROOT'], '', realpath($video));
+                $fileMap[$id]['video'] = $basePath . $relativePath;
+            }
+        }
+
+        // Map image files
+        foreach ($imageFiles as $image) {
+            $fileName = pathinfo($image, PATHINFO_FILENAME); // e.g., "1744988986691_croppedThumbnail"
+            if (preg_match('/^(\d+)_croppedThumbnail$/', $fileName, $matches)) {
+                $id = $matches[1];
+                $relativePath = str_replace($_SERVER['DOCUMENT_ROOT'], '', realpath($image));
+                $fileMap[$id]['thumbnail'] = $basePath . $relativePath;
+            }
+        }
+
+        // Combine into list
+        foreach ($fileMap as $id => $files) {
+            if (isset($files['video']) || isset($files['thumbnail'])) {
+                $filesList[] = [
+                    'id' => (int) $id,
+                    'video' => $files['video'] ?? null,
+                    'thumbnail' => $files['thumbnail'] ?? null
+                ];
+            }
         }
     }
-    echo json_encode([
-        'baseDomain' => $baseDomain . '/exps',
-        'files' => $videoFiles
-    ], JSON_PRETTY_PRINT);
+
+    echo json_encode(['files' => $filesList], JSON_PRETTY_PRINT);
 }
+
+
 ?>

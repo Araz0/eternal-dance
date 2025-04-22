@@ -1,0 +1,17 @@
+.PageContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: var(--padding);
+  box-sizing: border-box;
+}
+
+.navigationWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
