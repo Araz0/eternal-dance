@@ -1,9 +1,8 @@
-import { PageContainer } from '../components'
 import Header from '../components/Header/Header'
 import MouseFollowImageGallery from '../components/MouseFollowImageGallery/MouseFollowImageGallery'
 import { PaintingCanvas } from '../components/PaintingCanvas'
 import About from '../components/About/About'
-import styles from './styles.module.css'
+import Footer from '../components/Footer/Footer'
 
 export const Home = () => {
   return (  
@@ -17,6 +16,7 @@ export const Home = () => {
         movementIntensity={0.4} 
         lerpFactor={0.15}
       />
+      <Footer />
     </>
   )
 }
