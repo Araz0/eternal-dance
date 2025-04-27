@@ -1,16 +1,14 @@
 .about {
     height: fit-content;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
     color: white;
-    padding: 5vw 2vw;
+    margin: 30vh 0;
 }
 
 .about p {
-    font-size: 1.5rem;
-    line-height: 1.6rem;
-    max-width: 40vw;
+    font-size: 2.5em;
+    line-height: 3rem;
+    max-width: 75vw;
+    padding: 0 5%;
 }
 
 h2 {
