@@ -1,12 +1,15 @@
+version: '3.8'
+
 services:
-  eternal-dance:
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - RTSP_URL=rtsp://172.16.50.75:554/tdvidstream
     ports:
-      - '3000:3000'
+      - '3000:3000' # HTTP server
+      - '8080:8080' # WebSocket for TouchDesigner State
+      - '8081:8081' # WebSocket for TouchDesigner Elapsed Timer
+    environment:
+      - RTSP_URL=rtsp://host.docker.internal:554/tdvidstream
     volumes:
       - ./streamer/streams:/app/streamer/streams
-    restart: unless-stopped

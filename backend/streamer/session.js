@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { recordStream } from './record.js'
 import { uploadVideo, uploadImage } from './upload.js'
-import { Highlighter } from './Highlighter.js'
+import { Highlighter } from './highlighter.js'
 import { logger } from './utils/logger.js'
 
 /**
@@ -65,7 +65,7 @@ export class Session {
       this.recording = false
       logger('Recording stopped.')
 
-      if (this.videoPath) {
+      if (this.videoPath && this.videoPath !== -1) {
         const highlighter = new Highlighter(this.videoPath)
         try {
           const { finalVideo, thumbnail, croppedVideo, croppedThumbnail } =
