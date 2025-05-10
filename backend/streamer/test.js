@@ -1,15 +1,16 @@
 import { WebSocketServer } from 'ws'
+import { logger } from './utils/logger.js'
 
 const wss = new WebSocketServer({ port: 8080 })
 
 wss.on('connection', (ws) => {
-  console.log('TouchDesigner State connected')
+  logger('TouchDesigner State connected')
   ws.on('message', (msg) => {
     const data = JSON.parse(msg)
     if (data.current_state != undefined) {
-      console.log(data)
+      logger(data)
     }
-    // console.log('Received JSON:', JSON.parse(msg))
+    // logger('Received JSON:', JSON.parse(msg))
     // You can JSON.parse(msg) here and use it
   })
 })
@@ -17,11 +18,11 @@ wss.on('connection', (ws) => {
 const wss3 = new WebSocketServer({ port: 8081 })
 
 wss3.on('connection', (ws) => {
-  console.log('TouchDesigner Elapsed Timer connected')
+  logger('TouchDesigner Elapsed Timer connected')
   ws.on('message', (msg) => {
     const data = JSON.parse(msg)
-    console.log(data)
-    // console.log('Received JSON:', JSON.parse(msg))
+    logger(data)
+    // logger('Received JSON:', JSON.parse(msg))
     // You can JSON.parse(msg) here and use it
   })
 })

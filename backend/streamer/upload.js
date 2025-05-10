@@ -1,6 +1,7 @@
 import fs from 'fs'
 import axios from 'axios'
 import FormData from 'form-data'
+import { logger } from './utils/logger.js'
 
 const BASE_URL = 'https://api.eternal-dance.art'
 const API_ENDPOINT = BASE_URL + '/api.php'
@@ -13,7 +14,7 @@ const UPLOAD_DIR = 'exps'
  * @throws Will throw an error if the upload fails.
  * @example
  * uploadVideo('./path/to/video.mp4')
- *   .then(url => console.log('Uploaded video URL:', url))
+ *   .then(url => logger('Uploaded video URL:', url))
  */
 export async function uploadVideo(videoPath) {
   // Create a new form and append the video file stream.
@@ -29,7 +30,7 @@ export async function uploadVideo(videoPath) {
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
     })
-    console.log('Upload successful:', response.data)
+    logger('Upload successful:', response.data)
     return `${BASE_URL}/${UPLOAD_DIR}/${response.data.file}`
   } catch (error) {
     // Log detailed error information.
@@ -47,7 +48,7 @@ export async function uploadVideo(videoPath) {
  * @throws Will throw an error if the upload fails.
  * @example
  * uploadImage('./path/to/image.png')
- *  .then(url => console.log('Uploaded image URL:', url))
+ *  .then(url => logger('Uploaded image URL:', url))
  */
 export async function uploadImage(imagePath) {
   // Create a new form and append the image file stream.
@@ -63,7 +64,7 @@ export async function uploadImage(imagePath) {
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
     })
-    console.log('Upload successful:', response.data)
+    logger('Upload successful:', response.data)
     return `${BASE_URL}/${UPLOAD_DIR}/${response.data.file}`
   } catch (error) {
     // Log detailed error information.
