@@ -94,7 +94,7 @@ export class Highlighter {
         while ((match = regex.exec(output)) !== null) {
           timestamps.push(parseFloat(match[1]))
         }
-        logger('## ~ Highlighter ~ exec ~ timestamps:', timestamps)
+        logger('## ~ ffmpeg Highlighter  ~ timestamps:', timestamps)
         resolve(timestamps)
       })
     })

@@ -13,7 +13,7 @@ wss.on('connection', (ws) => {
     if (data.current_state != undefined) {
       logger(data)
       if (data.current_state === 1) {
-        const totalRecordingtime = data.duration1 + data.duration2
+        const totalRecordingtime = data.duration1 + data.duration2 || 180
 
         logger('## ~ ws.on ~ totalRecordingtime:', totalRecordingtime)
 
