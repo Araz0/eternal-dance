@@ -1,6 +1,8 @@
 import { exec } from 'child_process'
 import fs from 'fs'
 
+import { logger } from './utils/logger.js'
+
 /**
  * Highlighter class for processing video files to extract highlights, generate thumbnails,
  * and create a final video output.
@@ -11,7 +13,7 @@ export class Highlighter {
    * @param {string} videoPath - The path to the video file to be processed.
    */
   constructor(videoPath) {
-    console.log('## ~ Highlighter ~ constructor ~ videoPath:', videoPath)
+    logger('## ~ Highlighter ~ constructor ~ videoPath:', videoPath)
 
     this.videoPath = videoPath
     this.outputName = Date.now()
@@ -60,7 +62,7 @@ export class Highlighter {
           this.height = height
           this.duration = duration
 
-          console.log('## ~ meta:', this.width, this.height, this.duration)
+          logger('## ~ meta:', this.width, this.height, this.duration)
 
           resolve({ width, height, duration })
         } catch (err) {
@@ -92,7 +94,7 @@ export class Highlighter {
         while ((match = regex.exec(output)) !== null) {
           timestamps.push(parseFloat(match[1]))
         }
-        console.log('## ~ Highlighter ~ exec ~ timestamps:', timestamps)
+        logger('## ~ ffmpeg Highlighter  ~ timestamps:', timestamps)
         resolve(timestamps)
       })
     })

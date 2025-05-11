@@ -1,5 +1,5 @@
 # Use a base image with Node.js
-FROM node:18
+FROM node:20
 
 # Set the working directory
 WORKDIR /app
@@ -12,7 +12,7 @@ COPY ./streamer ./streamer
 COPY ./apis ./apis
 
 # Set default environment variable for RTSP URL
-ENV RTSP_URL=rtsp://127.0.0.1:554/tdvidstream
+ENV RTSP_URL=rtsp://host.docker.internal:554/tdvidstream
 
 # Create the streams directory
 RUN mkdir -p /app/streamer/streams
@@ -20,8 +20,8 @@ RUN mkdir -p /app/streamer/streams
 # Install dependencies
 RUN cd streamer && npm install
 
-# Expose the port used by the server
-EXPOSE 3000
+# Expose the ports used by the server and WebSocket connections
+EXPOSE 3000 8080 8081
 
 # Start the server
 CMD ["node", "streamer/server.js"]

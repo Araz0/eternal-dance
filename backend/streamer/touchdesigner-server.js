@@ -1,4 +1,5 @@
 import dgram from 'dgram'
+import { logger } from './utils/logger.js'
 
 export class UDPServer {
   constructor(ip, port) {
@@ -8,7 +9,7 @@ export class UDPServer {
     this.currentValue = null
     this.callback = null
 
-    console.log(`Creating UDP server on ${this.ip}:${this.port}`)
+    logger(`Creating UDP server on ${this.ip}:${this.port}`)
 
     // Set up event listeners
     this.server.on('message', (msg, rinfo) => this.handleMessage(msg, rinfo))
@@ -18,7 +19,7 @@ export class UDPServer {
 
   handleMessage(msg, rinfo) {
     const strMessage = msg.toString().trim()
-    console.log(
+    logger(
       `Received message from ${rinfo.address}:${rinfo.port} ->`,
       strMessage
     )
@@ -31,7 +32,7 @@ export class UDPServer {
 
   handleListening() {
     const address = this.server.address()
-    console.log(`UDP server listening on ${address.address}:${address.port}`)
+    logger(`UDP server listening on ${address.address}:${address.port}`)
   }
 
   handleError(err) {
@@ -41,12 +42,12 @@ export class UDPServer {
 
   start() {
     this.server.bind(this.port, this.ip)
-    console.log(`UDP server bound to ${this.ip}:${this.port}`)
+    logger(`UDP server bound to ${this.ip}:${this.port}`)
   }
 
   stop() {
     this.server.close(() => {
-      console.log('UDP server stopped.')
+      logger('UDP server stopped.')
     })
   }
 

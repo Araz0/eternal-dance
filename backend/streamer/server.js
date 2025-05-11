@@ -1,59 +1,45 @@
-import fs from 'fs'
-import { recordStream } from './record.js'
-import { uploadVideo, uploadImage } from './upload.js'
-// import { UDPServer } from './touchdesigner-server.js'
-import { Highlighter } from './Highlighter.js'
+import { WebSocketServer } from 'ws'
+import { Session } from './session.js'
+import { logger } from './utils/logger.js'
 
-const timestamp = Date.now()
-const recordingDurationInSeconds = 30
+const wss = new WebSocketServer({ port: 8080 })
 
-// Ensure the streams directory exists
-if (!fs.existsSync('./streams')) {
-  fs.mkdirSync('./streams', { recursive: true })
-}
+wss.on('connection', (ws) => {
+  logger('TouchDesigner State connected')
+  const session = new Session()
 
-console.time('recordStream')
-// timer running on the side asynchronously
-const recordingTimer = setInterval(() => {
-  const elapsedTime = Math.floor((Date.now() - timestamp) / 1000)
-  console.log(`${elapsedTime} seconds elapsed`)
-}, 1000)
+  ws.on('message', async (msg) => {
+    const data = JSON.parse(msg)
+    if (data.current_state != undefined) {
+      logger(data)
+      if (data.current_state === 1) {
+        const totalRecordingtime = data.duration1 + data.duration2 || 180
 
-const videoPath = await recordStream({
-  rtspUrl: process.env.RTSP_URL || 'rtsp://127.0.0.1:554/tdvidstream',
-  duration: recordingDurationInSeconds,
-  outputFile: './streams/' + timestamp + '.mp4',
-})
-console.timeEnd('recordStream')
-console.log('Video saved to:', videoPath)
+        logger('## ~ ws.on ~ totalRecordingtime:', totalRecordingtime)
 
-const highlighter = new Highlighter(videoPath)
-try {
-  const { finalVideo, thumbnail, croppedVideo, croppedThumbnail } =
-    await highlighter.highlight()
-  console.log('local paths:', {
-    finalVideo,
-    thumbnail,
-    croppedVideo,
-    croppedThumbnail,
+        const links = await session.startRecording(totalRecordingtime)
+
+        logger('## ~ ws.on ~ links:', links)
+      } else if (data.current_state === 0) {
+        session.cancelRecording(data.current_state)
+      } else if (data.current_state === 2) {
+        logger('Ignoring current_state: 2 during active recording')
+      } else if (data.current_state === 3) {
+        logger('Ignoring current_state: 3 during active recording')
+      }
+    }
   })
+})
 
-  console.log('Uploading...')
-  const onlineReelLink = await uploadVideo(croppedVideo)
+// use this incase you like to share the current status in a progressbar or something in a UI
+const wss3 = new WebSocketServer({ port: 8081 })
 
-  console.log('## ~ onlineReelLink:', onlineReelLink)
-
-  const onlineThumbnailLink = await uploadImage(croppedThumbnail)
-
-  console.log('## ~ onlineThumbnailLink:', onlineThumbnailLink)
-} catch (error) {
-  console.error('Error:', error)
-}
-
-// // Initialize the UDP server
-// const udpServer = new UDPServer('127.0.0.1', 41234) // Replace with your desired IP and port
-
-// udpServer.onCallback(async (currentValue) => {
-
-// })
-// udpServer.start()
+wss3.on('connection', (ws) => {
+  logger('TouchDesigner Elapsed Timer connected')
+  ws.on('message', (msg) => {
+    const data = JSON.parse(msg)
+    logger(data)
+    // logger('Received JSON:', JSON.parse(msg))
+    // You can JSON.parse(msg) here and use it
+  })
+})
