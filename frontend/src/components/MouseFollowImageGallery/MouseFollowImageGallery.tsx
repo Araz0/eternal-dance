@@ -17,9 +17,9 @@ interface MouseFollowImageGalleryProps {
 }
 
 const MouseFollowImageGallery: React.FC<MouseFollowImageGalleryProps> = ({
-  maxMovementRadius = 40,
-  movementIntensity = 0.2,
-  lerpFactor = 0.1,
+  maxMovementRadius = 20,
+  movementIntensity = 0.5,
+  lerpFactor = 0.5,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const containerCenter = useRef({ x: 0, y: 0 });
@@ -28,13 +28,13 @@ const MouseFollowImageGallery: React.FC<MouseFollowImageGalleryProps> = ({
   const requestRef = useRef<number>(0);
 
   const images: ImageData[] = [
-    { src: "./images/image1.jpg", alt: "Image 1", baseOffset: { x: -500, y: -450 }, width: 200, height: 300 },
-    { src: "./images/image2.jpg", alt: "Image 2", baseOffset: { x: 470, y: 45 }, width: 250, height: 200 },
-    { src: "./images/image3.jpg", alt: "Image 3", baseOffset: { x: -310, y: 150 }, width: 180, height: 270 },
-    { src: "./images/image4.jpg", alt: "Image 4", baseOffset: { x: 360, y: -350 }, width: 220, height: 280 },
-    { src: "./images/image5.jpg", alt: "Image 5", baseOffset: { x: -700, y: -30 }, width: 240, height: 260 },
-    { src: "./images/image6.jpg", alt: "Image 6", baseOffset: { x: -50, y: -400 }, width: 200, height: 250 },
-    { src: "./images/image7.jpg", alt: "Image 7", baseOffset: { x: 70, y: 180 }, width: 230, height: 240 },
+    { src: "./images/image1.jpg", alt: "Image 1", baseOffset: { x: 400, y: -100 }, width: 300, height: 400 },
+    { src: "./images/image2.jpg", alt: "Image 2", baseOffset: { x: -100, y: 50 }, width: 450, height: 300 },
+    { src: "./images/image3.jpg", alt: "Image 3", baseOffset: { x: 150, y: -250 }, width: 200, height: 250 },
+    { src: "./images/image4.jpg", alt: "Image 4", baseOffset: { x: -300, y: -350 }, width: 400, height: 280 },
+    { src: "./images/image5.jpg", alt: "Image 5", baseOffset: { x: -400, y: -20 }, width: 250, height: 350 },
+    { src: "./images/image6.jpg", alt: "Image 6", baseOffset: { x: -700, y: -300 }, width: 300, height: 250 },
+    // { src: "./images/image7.jpg", alt: "Image 7", baseOffset: { x: 0, y: 0 }, width: 230, height: 240 },
   ];
   
 
@@ -111,12 +111,12 @@ const MouseFollowImageGallery: React.FC<MouseFollowImageGalleryProps> = ({
 >
   <div className={styles.imagesWrapper}>
     
-    <div className={styles.centerText}>
+    {/* <div className={styles.centerText}>
       <h2>Where and when?</h2>
       <span>Find us at <b>Creativity Rules Festival</b></span><br></br>
       <span>Alte Saline, Hallein</span><br></br>
       <span>28.05.2025 - 31.05.2025</span>
-    </div>
+    </div> */}
 
     {images.map((img, index) => (
       <div

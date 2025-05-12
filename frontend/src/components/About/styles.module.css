@@ -1,7 +1,11 @@
 .about {
     height: fit-content;
+    min-height: 120vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: white;
-    margin: 30vh 0;
+    /* margin: 30vh 0; */
 }
 
 .about p {
