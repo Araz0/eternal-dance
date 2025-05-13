@@ -68,20 +68,16 @@ export class Session {
       if (this.videoPath && this.videoPath !== -1) {
         const highlighter = new Highlighter(this.videoPath)
         try {
-          const { finalVideo, thumbnail, croppedVideo, croppedThumbnail } =
-            await highlighter.highlight()
-          logger('Local paths:', {
-            finalVideo,
-            thumbnail,
-            croppedVideo,
-            croppedThumbnail,
-          })
+          const { reelVideo, thumbnail } = await highlighter.highlight(
+            durationInSeconds
+          )
+          logger('Local paths:', { reelVideo, thumbnail })
 
           logger('Uploading...')
-          const onlineReelLink = await uploadVideo(croppedVideo)
+          const onlineReelLink = await uploadVideo(reelVideo)
           logger('## ~ onlineReelLink:', onlineReelLink)
 
-          const onlineThumbnailLink = await uploadImage(croppedThumbnail)
+          const onlineThumbnailLink = await uploadImage(thumbnail)
           logger('## ~ onlineThumbnailLink:', onlineThumbnailLink)
 
           // Return the online links
