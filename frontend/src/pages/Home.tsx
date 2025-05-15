@@ -7,7 +7,7 @@ import Footer from '../components/Footer/Footer'
 export const Home = () => {
   return (  
     <>
-      <Header />
+      {/* <Header /> */}
       <PaintingCanvas />
       {/* <p className={styles.logline}>An audiovisual installation where movement and emotion intertwine in an eternal dance of transformation.</p> */}
       <About />

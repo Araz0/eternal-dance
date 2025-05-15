@@ -5,6 +5,7 @@ import {
   ReelsGallery,
 } from '../components/'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import Header from '../components/Header/Header'
 
 const isMobileDevice = /Mobi|Android|iPhone|iPad|iPod/i.test(
   navigator.userAgent
@@ -63,6 +64,8 @@ export const Gallery = () => {
   }, [])
 
   return (
+    <>
+    {/* <Header /> */}
     <PageContainer>
       {!loading &&
         (isMobileDevice ? (
@@ -80,5 +83,6 @@ export const Gallery = () => {
         isMobile={isMobileDevice}
       />
     </PageContainer>
+    </>
   )
 }
