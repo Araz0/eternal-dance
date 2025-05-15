@@ -30,6 +30,9 @@ export class Highlighter {
   async initializeMetadata(videoPath) {
     const { width, height, duration } = await this.getVideoMetadata(videoPath)
     this.width = width
+
+    console.log('## ~ Highlighter ~ initializeMetadata:', width, height)
+
     this.height = height
     this.duration = duration
   }
@@ -179,33 +182,63 @@ export class Highlighter {
    */
   async cropVideoToReelAspect(videoPath, outputFile) {
     return new Promise((resolve, reject) => {
-      const inputAspect = this.width / this.height
+      const inputW = this.width // e.g. 1920
+      const inputH = this.height // e.g. 1080
       const reelAspect = 9 / 16
 
-      let cropWidth, cropHeight
-
-      if (inputAspect > reelAspect) {
-        // Too wide → crop sides
-        cropHeight = this.height
-        cropWidth = Math.floor(cropHeight * reelAspect)
+      let cropW, cropH
+      if (inputW / inputH > reelAspect) {
+        // too wide → crop sides
+        cropH = inputH
+        cropW = Math.floor(cropH * reelAspect)
       } else {
-        // Too tall → crop top/bottom
-        cropWidth = this.width
-        cropHeight = Math.floor(cropWidth / reelAspect)
+        // too tall → crop top/bottom (rare for landscape source)
+        cropW = inputW
+        cropH = Math.floor(cropW / reelAspect)
       }
 
-      const x = Math.floor((this.width - cropWidth) / 2)
-      const y = Math.floor((this.height - cropHeight) / 2)
+      // make them even
+      if (cropW % 2) cropW++
+      if (cropH % 2) cropH++
 
-      const cropCommand = `ffmpeg -i "${videoPath}" -filter:v "crop=${cropWidth}:${cropHeight}:${x}:${y}" -c:a copy "${outputFile}"`
+      const x = Math.floor((inputW - cropW) / 2)
+      const y = Math.floor((inputH - cropH) / 2)
 
-      exec(cropCommand, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Error cropping video: ${error.message}`)
-          return reject(error)
-        }
+      // crop, then scale back up to full-reel resolution
+      const vf = `crop=${cropW}:${cropH}:${x}:${y},scale=1080:1920`
+
+      const cmd = [
+        `ffmpeg -i "${videoPath}"`,
+        `-filter:v "${vf}"`,
+        // `-c:v libx264 -crf 18 -preset veryfast`,
+        `-c:a copy "${outputFile}"`,
+      ].join(' ')
+
+      exec(cmd, (err, stdout, stderr) => {
+        if (err) return reject(err)
         resolve(outputFile)
       })
+    })
+  }
+  s
+
+  /**
+   * Compute centered highlight segments within a total duration.
+   *
+   * @param {number} totalSec       – total duration, in seconds
+   * @param {number[]} fractions    – array of fractional positions (e.g. [0.25, 0.5, 0.75])
+   * @param {number} segmentLenSec  – length of each segment, in seconds
+   * @returns {Array<{ startTime: number, duration: number }>}
+   */
+  computeCenteredHighlights(totalSec, fractions, segmentLenSec) {
+    const halfLen = segmentLenSec / 2
+    return fractions.map((frac) => {
+      const center = totalSec * frac
+      const start = Math.max(0, center - halfLen)
+      return {
+        startTime: start,
+        duration: segmentLenSec,
+      }
     })
   }
 
@@ -214,33 +247,24 @@ export class Highlighter {
    * @returns {Promise<Object>} - A promise that resolves to an object containing the paths of the final video and thumbnail.
    * @throws {Error} - Throws an error if the highlight generation process fails.
    */
-  async highlight() {
-    try {
-      const highlights = await this.getSceneHighlights()
-      const highlightsConfig = [
-        {
-          startTime: highlights[0] ? highlights[0] - 3 : 3,
-          duration: 10,
-        },
-        {
-          startTime: highlights[1] ? highlights[1] - 3 : 13,
-          duration: 10,
-        },
-        {
-          startTime: highlights[2] ? highlights[2] - 3 : 23,
-          duration: 10,
-        },
-      ]
-      // if (highlights.length < 3) {
-      //   // add values to fill the array to 3
-      //   const diff = 3 - highlights.length
-      //   const lastHighlight = highlights[highlights.length - 1]
-      //   for (let i = 0; i < diff; i++) {
-      //     highlights.push(lastHighlight + (i + 1) * 2)
-      //   }
-      //   throw new Error('Not enough highlights detected.')
-      // }
+  async highlight(duration, withTransition = false) {
+    let highlightsConfig = []
 
+    if (withTransition) {
+      highlightsConfig = this.computeCenteredHighlights(
+        duration,
+        [0.25, 0.5, 0.75],
+        10
+      )
+    } else {
+      highlightsConfig = this.computeCenteredHighlights(
+        duration,
+        [0.25, 0.75],
+        15
+      )
+    }
+
+    try {
       // Ensure the streams directory exists
       if (!fs.existsSync('./streams')) {
         fs.mkdirSync('./streams', { recursive: true })
@@ -259,24 +283,20 @@ export class Highlighter {
       const finalOutput = `./streams/${this.outputName}_final_output.mp4`
       await this.concatenateSegments(segments, finalOutput)
 
+      // const thumbnailPath = `./streams/${this.outputName}_thumbnail.jpg`
+      // await this.generateThumbnail(finalOutput, '00:00:01.000', thumbnailPath)
+
+      const reelVideoPath = `./streams/${this.outputName}_reel.mp4`
+      await this.cropVideoToReelAspect(finalOutput, reelVideoPath)
+
       const thumbnailPath = `./streams/${this.outputName}_thumbnail.jpg`
-      await this.generateThumbnail(finalOutput, '00:00:01.000', thumbnailPath)
-
-      const croppedVideoPath = `./streams/${this.outputName}_cropped.mp4`
-      await this.cropVideoToReelAspect(finalOutput, croppedVideoPath)
-
-      const croppedThumbnailPath = `./streams/${this.outputName}_croppedThumbnail.jpg`
-      await this.generateThumbnail(
-        croppedVideoPath,
-        '00:00:01.000',
-        croppedThumbnailPath
-      )
+      await this.generateThumbnail(reelVideoPath, '00:00:05.000', thumbnailPath)
 
       return {
-        finalVideo: finalOutput,
+        // finalVideo: finalOutput,
+        // thumbnail: thumbnailPath,
+        reelVideo: reelVideoPath,
         thumbnail: thumbnailPath,
-        croppedVideo: croppedVideoPath,
-        croppedThumbnail: croppedThumbnailPath,
       }
     } catch (error) {
       console.error('Error during highlight generation:', error)
