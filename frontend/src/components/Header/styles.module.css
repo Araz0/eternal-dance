@@ -9,7 +9,7 @@
     color: white;
     padding: 2% 5%;
     z-index: 2;
-    position: absolute;
+    position: relative;
     animation: fadeInUp 1s ease-out forwards;
     /* mix-blend-mode: difference; */
 }
