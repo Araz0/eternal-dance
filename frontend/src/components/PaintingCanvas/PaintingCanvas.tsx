@@ -17,7 +17,6 @@ const PaintingCanvasRaw: React.FC = () => {
     const sketch = new p5((p: p5) => {
       let brushSize: number = 20;
       let hue: number = 0;
-      let isDrawing: boolean = false;
       let userCanDraw: boolean = false;
       let demoPts: Array<{ x: number; y: number; prevX: number | null; prevY: number | null }> = [];
       let demoIndex: number = 0;

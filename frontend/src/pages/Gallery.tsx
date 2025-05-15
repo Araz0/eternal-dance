@@ -5,7 +5,6 @@ import {
   ReelsGallery,
 } from '../components/'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import Header from '../components/Header/Header'
 
 const isMobileDevice = /Mobi|Android|iPhone|iPad|iPod/i.test(
   navigator.userAgent
