@@ -9,10 +9,7 @@ const LenisProvider = ({ children }: { children: ReactNode }) => {
   const lenisRef = useRef<LenisRef | null>(null);
   let location = useLocation();
 
-  const lenis = useLenis(({ scroll }) => {
-   //  called every scroll
-    // console.log("scroll", scroll);
-  });
+  const lenis = useLenis();
 
   useEffect(() => {
     function update(time: number) {
@@ -20,7 +17,6 @@ const LenisProvider = ({ children }: { children: ReactNode }) => {
     }
 
     gsap.ticker.add(update);
-    console.log("hallo");
 
     return () => gsap.ticker.remove(update);
   }, []);
