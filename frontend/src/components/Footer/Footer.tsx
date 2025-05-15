@@ -1,4 +1,5 @@
 import styles from "./styles.module.css";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -20,7 +21,7 @@ export default function Footer() {
               <a href="#">Instagram</a>
             </li>
             <li>
-              <a href="#">Imprint</a>
+              <Link to='/imprint'>Imprint</Link>
             </li>
           </ul>
           <span className={styles.credit}>© 2025 The Eternal Dance</span>
