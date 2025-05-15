@@ -7,13 +7,18 @@
     justify-content: space-between;
     align-items: center;
     color: white;
-    padding: 0% 5%;
+    padding: 2% 5%;
+    z-index: 2;
+    position: relative;
+    animation: fadeInUp 1s ease-out forwards;
+    /* mix-blend-mode: difference; */
 }
 
 .header h1 {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 600;
     font-family: "elza", "sans-serif";
+    font-weight: 700
 }
 
 .header ul {
@@ -34,6 +39,7 @@
     font-family: "elza", "sans-serif";
     text-decoration: none;
     color: white;
+    font-weight: 700
 }
 
 .header ul li a:hover {

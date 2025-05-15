@@ -10,9 +10,6 @@ export default function Header() {
       <nav>
         <ul>
           <li>
-            <Link to='/about'>About</Link>
-          </li>
-          <li>
             <Link to='/team'>Team</Link>
           </li>
           <li>

@@ -63,6 +63,8 @@ export const Gallery = () => {
   }, [])
 
   return (
+    <>
+    {/* <Header /> */}
     <PageContainer>
       {!loading &&
         (isMobileDevice ? (
@@ -80,5 +82,6 @@ export const Gallery = () => {
         isMobile={isMobileDevice}
       />
     </PageContainer>
+    </>
   )
 }
