@@ -6,6 +6,7 @@ This repository acts as a monorepo containing both the frontend and backend code
 
 - `/`: Contains the code for the public website, which will be available under the domain [eternal-dance.art](https://eternal-dance.art).
 - `backend/`: Contains the server-side code responsible for getting, saving, and uploading videos to the server, as well as handling all related operations.
+- `frontend/`: Frontend contains code related to the public website of The Eternal Dance. Implemented using React and TypeScript.
 
 ## Frontend
 
