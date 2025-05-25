@@ -1,3 +1,4 @@
+import { useSearchParams } from 'react-router-dom'
 import {
   PageContainer,
   InfiniteGallery,
@@ -17,6 +18,10 @@ export type FileItem = {
 }
 
 export const Gallery = () => {
+  const [searchParams] = useSearchParams()
+  const rawId = searchParams.get('id') // string | null
+  const focusedId = rawId !== null ? +rawId : undefined // number | undefined
+
   const [showOverlay, setShowOverlay] = useState(false)
   const [videoSrc, setVideoSrc] = useState<string | null>(null)
 
@@ -64,24 +69,25 @@ export const Gallery = () => {
 
   return (
     <>
-    {/* <Header /> */}
-    <PageContainer>
-      {!loading &&
-        (isMobileDevice ? (
-          <ReelsGallery reels={memoizedItems} onItemClick={handleItemClick} />
-        ) : (
-          <InfiniteGallery
-            thumbnails={thumbnails}
-            onItemClick={handleItemClick}
-          />
-        ))}
-      <VideoOverlay
-        videoSrc={videoSrc ? videoSrc : ''}
-        showOverlay={showOverlay}
-        handleOverlayClose={handleOverlayClose}
-        isMobile={isMobileDevice}
-      />
-    </PageContainer>
+      {/* <Header /> */}
+      <PageContainer>
+        {!loading &&
+          (isMobileDevice ? (
+            <ReelsGallery reels={memoizedItems} onItemClick={handleItemClick} />
+          ) : (
+            <InfiniteGallery
+              thumbnails={thumbnails}
+              onItemClick={handleItemClick}
+              focusedId={focusedId}
+            />
+          ))}
+        <VideoOverlay
+          videoSrc={videoSrc ? videoSrc : ''}
+          showOverlay={showOverlay}
+          handleOverlayClose={handleOverlayClose}
+          isMobile={isMobileDevice}
+        />
+      </PageContainer>
     </>
   )
 }
