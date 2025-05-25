@@ -7,8 +7,8 @@ export const Home = () => {
   return (  
     <>
       <PaintingCanvas />
-      <About />
       <ZoomParallaxImageGallery />
+      <About />
       <Footer />
     </>
   )
