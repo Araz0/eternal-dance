@@ -1,21 +1,23 @@
-import React, { useRef, memo, useCallback, useState } from 'react'
+import React, { useRef, memo, useCallback, useState, useEffect } from 'react'
 import { useCanvas } from './useCanvas'
 import { SearchInput } from '../SearchInput'
 
 export interface InfiniteGalleryProps {
   thumbnails: string[]
   onItemClick: (index: number) => void
+  focusedId?: number
 }
 
 const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({
   thumbnails,
   onItemClick,
+  focusedId,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
   // Get centerOnItem function from the custom hook.
-  const { centerOnItem } = useCanvas({
+  const { zoomToItem } = useCanvas({
     canvasRef,
     thumbnails,
     onItemClick,
@@ -30,9 +32,14 @@ const InfiniteGalleryRaw: React.FC<InfiniteGalleryProps> = ({
       thumbnail.toLowerCase().includes(query)
     )
     if (foundIndex !== -1) {
-      centerOnItem(foundIndex)
+      zoomToItem(foundIndex)
     }
-  }, [centerOnItem, searchQuery, thumbnails])
+  }, [zoomToItem, searchQuery, thumbnails])
+
+  useEffect(() => {
+    if (!focusedId) return
+    zoomToItem(focusedId)
+  }, [focusedId, zoomToItem])
 
   return (
     <div style={{ position: 'relative' }}>

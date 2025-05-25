@@ -10,6 +10,7 @@ wss.on('connection', (ws) => {
 
   ws.on('message', async (msg) => {
     const data = JSON.parse(msg)
+
     if (data.current_state != undefined) {
       logger(data)
       if (data.current_state === 1) {
@@ -17,9 +18,9 @@ wss.on('connection', (ws) => {
 
         logger('## ~ ws.on ~ totalRecordingtime:', totalRecordingtime)
 
-        const links = await session.startRecording(totalRecordingtime)
+        const values = await session.startRecording(totalRecordingtime, data.id)
 
-        logger('## ~ ws.on ~ links:', links)
+        logger('## ~ ws.on ~ values:', values)
       } else if (data.current_state === 0) {
         session.cancelRecording(data.current_state)
       } else if (data.current_state === 2) {

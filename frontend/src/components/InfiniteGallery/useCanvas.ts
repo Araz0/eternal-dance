@@ -117,6 +117,7 @@ export function useCanvas({
 
     // Draw each thumbnail image at its computed center.
     itemsRef.current.forEach((item) => {
+      if (!item.thumbnail.complete || item.thumbnail.naturalWidth === 0) return
       const cellX = item.col * tileWidth * scaleRef.current + offsetXRef.current
       const cellY =
         item.row * tileHeight * scaleRef.current + offsetYRef.current
@@ -200,7 +201,8 @@ export function useCanvas({
     thumbnails.forEach((src, i) => {
       const img = new Image()
       img.src = src
-      const handleLoad = () => {
+
+      img.onload = () => {
         const pos = positions[i]
         if (pos) {
           newItems.push({
@@ -217,8 +219,15 @@ export function useCanvas({
           drawGrid()
         }
       }
-      img.onload = handleLoad
-      img.onerror = handleLoad
+
+      img.onerror = () => {
+        console.warn(`Thumbnail failed to load at index ${i}: ${src}`)
+        loadedCount++
+        if (loadedCount === thumbnails.length) {
+          itemsRef.current = newItems
+          drawGrid()
+        }
+      }
     })
   }, [generateSpiralPositions, thumbnails, drawGrid])
 
@@ -308,26 +317,31 @@ export function useCanvas({
     drawGrid()
   }, [canvasRef, tileWidth, tileHeight, drawGrid])
 
-  // New: Function to center the canvas on a specific item by its index.
-  // Instead of using the drawn image bounds (which include random offsets),
-  // this calculates the target based on the grid cell's center.
-  const centerOnItem = useCallback(
-    (index: number) => {
+  const zoomToItem = useCallback(
+    (index: number, targetScale: number = maxZoom) => {
       const canvas = canvasRef.current
       if (!canvas) return
+
+      // 1) clamp and set the new scale
+      const clamped = Math.max(minZoom, Math.min(targetScale, maxZoom))
+      scaleRef.current = clamped
+
+      // 2) find the item and compute its tile center in world coords
       const item = itemsRef.current.find((it) => it.index === index)
       if (!item) return
-      const currentScale = scaleRef.current
-      // Calculate the center of the cell (tile) for this item.
       const tileCenterX =
-        item.col * tileWidth * currentScale + (tileWidth * currentScale) / 2
+        item.col * tileWidth * clamped + (tileWidth * clamped) / 2
       const tileCenterY =
-        item.row * tileHeight * currentScale + (tileHeight * currentScale) / 2
+        item.row * tileHeight * clamped + (tileHeight * clamped) / 2
+
+      // 3) recalculate offsets so that tileCenterX,Y lands in the canvas center
       offsetXRef.current = canvas.width / 2 - tileCenterX
       offsetYRef.current = canvas.height / 2 - tileCenterY
+
+      // 4) redraw at the new zoom & offset
       drawGrid()
     },
-    [canvasRef, drawGrid, tileWidth, tileHeight]
+    [canvasRef, drawGrid, tileWidth, tileHeight, minZoom, maxZoom]
   )
 
   useEffect(() => {
@@ -364,6 +378,5 @@ export function useCanvas({
     handleCanvasClick,
   ])
 
-  // Expose the redraw function and centerOnItem.
-  return { redraw: drawGrid, centerOnItem }
+  return { zoomToItem }
 }
