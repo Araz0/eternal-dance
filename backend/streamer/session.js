@@ -20,7 +20,7 @@ export class Session {
   constructor() {
     this.recording = false
     this.videoPath = null
-    this.timestamp = null
+    this.id = null
     this.recordingPromise = null
     this.recordingsFolder = './streams'
 
@@ -40,7 +40,7 @@ export class Session {
    * @returns {Promise<Object>} An object containing the online links for the processed video and thumbnail.
    * @throws {Error} If an error occurs during recording, processing, or uploading.
    */
-  async startRecording(durationInSeconds) {
+  async startRecording(durationInSeconds, id) {
     if (this.recording) {
       logger('Recording is already in progress.')
       return
@@ -50,13 +50,15 @@ export class Session {
     logger(
       `Started recording with ${durationInSeconds} seconds from the startRecording method`
     )
-    this.timestamp = Date.now()
+    this.id = id
+
+    console.log('## ~ Session ~ startRecording ~ this.id:', this.id)
 
     try {
       this.recordingPromise = recordStream({
         rtspUrl: process.env.RTSP_URL || 'rtsp://127.0.0.1:554/tdvidstream',
         duration: durationInSeconds,
-        outputFile: this.recordingsFolder + '/' + this.timestamp + '.mp4',
+        outputFile: this.recordingsFolder + '/' + this.id + '.mp4',
       })
       this.videoPath = await this.recordingPromise
       logger('Video saved to:', this.videoPath)
@@ -88,6 +90,7 @@ export class Session {
           return {
             onlineReelLink,
             onlineThumbnailLink,
+            id: this.id,
           }
         } catch (error) {
           console.error('Error during processing:', error)
