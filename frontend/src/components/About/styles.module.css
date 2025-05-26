@@ -19,3 +19,25 @@ h2 {
     text-transform: uppercase;
     font-weight: 800;
 }
+
+@media (max-width: 768px) {
+    .about {
+         min-height: 70vh;
+    }
+    .about p {
+        font-size: 1.5em;
+        line-height: 1.5rem;
+        max-width: 90vw;
+    }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+    .about {
+         min-height: 70vh;
+    }
+    .about p {
+        font-size: 1.5em;
+        line-height: 1.5rem;
+        max-width: 90vw;
+    }
+}
