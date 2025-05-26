@@ -5,6 +5,7 @@
     width: 100vw;
     height: 100vh;
     z-index: 0;
+    cursor: url(/images/brush-cursor-64.png), auto;
 }
 
 .overlay {
@@ -29,6 +30,7 @@
     /* align-items: flex-end; */
     z-index: 2;
     padding: 0 5%;
+    cursor: url(/images/brush-cursor-64.png), auto;
 }
 
 .logline {
