@@ -5,23 +5,28 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     color: white;
     padding: 2% 5%;
-    z-index: 2;
+    z-index: 100;
     position: relative;
     animation: fadeInUp 1s ease-out forwards;
-    /* mix-blend-mode: difference; */
 }
 
 .header h1 {
     font-size: 2rem;
-    font-weight: 600;
+    font-weight: 700;
     font-family: "elza", "sans-serif";
-    font-weight: 700
+    z-index: 101;
+    margin: 0;
 }
 
-.header ul {
+.header h1 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.desktopNav ul {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -33,16 +38,113 @@
     column-gap: 5vh;
 }
 
-.header ul li a {
+.desktopNav ul li a {
     font-size: 1.5rem;
-    font-weight: 600;
+    font-weight: 700;
     font-family: "elza", "sans-serif";
     text-decoration: none;
     color: white;
-    font-weight: 700
+    transition: text-decoration 0.3s ease;
 }
 
-.header ul li a:hover {
+.desktopNav ul li a:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+.burgerButton {
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 101;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: "elza", "sans-serif";
+    transition: opacity 0.3s ease;
+}
+
+
+.burgerButton:focus {
+    outline: none;
+}
+
+.mobileNavOverlay {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    height: 100vh;
+    width: 100vw;
+    overflow-y: hidden;
+}
+
+.mobileNavOverlayOpen {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobileNavOverlay ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.mobileNavOverlay ul li {
+    margin-bottom: 2rem;
+}
+
+.mobileNavOverlay ul li a {
+    font-size: 2.5rem;
+    font-weight: 700;
+    font-family: "elza", "sans-serif";
+    text-decoration: none;
+    color: white;
+    transition: color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+
+    .desktopNav {
+        display: none;
+    }
+
+    .burgerButton {
+        display: flex;
+    }
+
+    .header {
+        padding: 7% 5%;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
 }

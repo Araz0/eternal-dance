@@ -4,6 +4,7 @@
     color: white;
     position: relative;
 }
+
 .backgroundVideo {
     position: absolute;
     top: 0;
@@ -37,7 +38,7 @@
 }
 
 
-.footer span{
+.footer span {
     font-size: 7rem;
     display: block;
     text-transform: uppercase;
@@ -73,4 +74,36 @@ span.credit {
     font-size: 0.6rem;
     color: white;
     text-align: right;
+}
+
+@media (max-width: 768px) {
+    .footer span {
+        font-size: 3rem;
+    }
+
+    span.credit {
+        font-size: 0.6rem;
+        color: white;
+        text-align: right;
+    }
+    
+    .footer ul {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+    .footer span {
+        font-size: 3rem;
+    }
+
+    span.credit {
+        font-size: 0.6rem;
+        color: white;
+        text-align: right;
+    }
+    
+    .footer ul {
+        font-size: 1rem;
+    }
 }

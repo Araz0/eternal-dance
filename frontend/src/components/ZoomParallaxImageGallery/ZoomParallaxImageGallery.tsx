@@ -10,40 +10,46 @@ export default function ZoomParallaxImageGallery() {
     offset: ["start start", "end end"],
   });
 
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 4]);
-  const scale2 = useTransform(scrollYProgress, [0, 1], [1, 5]);
-  const scale3 = useTransform(scrollYProgress, [0, 1], [1, 6]);
-  const scale4 = useTransform(scrollYProgress, [0, 1], [1, 8]);
-  const scale5 = useTransform(scrollYProgress, [0, 1], [1, 9]);
+  let scale, scale2, scale3, scale4, scale5;
+
+  if (typeof window !== "undefined" && window.innerWidth > 768) {
+    scale = useTransform(scrollYProgress, [0, 1], [1, 4]);
+    scale2 = useTransform(scrollYProgress, [0, 1], [1, 5]);
+    scale3 = useTransform(scrollYProgress, [0, 1], [1, 6]);
+    scale4 = useTransform(scrollYProgress, [0, 1], [1, 8]);
+    scale5 = useTransform(scrollYProgress, [0, 1], [1, 9]);
+  } else {
+    scale = scale2 = scale3 = scale4 = scale5 = 1;
+  }
 
   const pictures = [
     {
       src: "./images/landing-page/image4.jpg",
       scale: scale,
-      alt: "Image 1 description"
+      alt: "Image 1 description",
     },
     {
       src: "./images/landing-page/image6.jpg",
       scale: scale2,
-      alt: "Image 2 description"
+      alt: "Image 2 description",
     },
 
     {
       src: "./images/landing-page/image5.jpg",
       scale: scale3,
-      alt: "Image 3 description"
+      alt: "Image 3 description",
     },
 
     {
       src: "./images/landing-page/image2.jpg",
       scale: scale4,
-      alt: "Image 4 description"
+      alt: "Image 4 description",
     },
     {
       src: "./images/landing-page/image7.jpg",
       scale: scale5,
-      alt: "Image 5 description"
-    }
+      alt: "Image 5 description",
+    },
   ];
 
   return (
