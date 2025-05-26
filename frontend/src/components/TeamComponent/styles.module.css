@@ -8,7 +8,7 @@
   font-style: normal;
   padding: 0 5%;
   height: 90vh;
-  margin-top: calc(10vh + 5%);
+  margin-top: calc(calc(10vh + 5%) + 50px);
 }
 
 .team h2 {
