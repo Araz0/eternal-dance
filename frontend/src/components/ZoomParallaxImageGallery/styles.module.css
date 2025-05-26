@@ -1,74 +1,122 @@
-.container{
+.container {
     height: 300vh;
     position: relative;
-    .sticky{
-        position: sticky;
+}
+
+.sticky {
+    position: sticky;
+    overflow: hidden;
+    top: 0;
+    height: 100vh;
+}
+
+.el {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.imageContainer {
+    position: relative;
+    width: 25vw;
+    height: 25vh;
+}
+
+.imageContainer img {
+    object-fit: cover;
+}
+
+.el:nth-of-type(2) .imageContainer {
+    top: -30vh;
+    left: 5vw;
+    width: 35vw;
+    height: 30vh;
+}
+
+.el:nth-of-type(3) .imageContainer {
+    top: -10vh;
+    left: -25vw;
+    width: 20vw;
+    height: 45vh;
+}
+
+.el:nth-of-type(4) .imageContainer {
+    left: 27.5vw;
+    width: 25vw;
+    height: 25vh;
+}
+
+.el:nth-of-type(5) .imageContainer {
+    top: 27.5vh;
+    left: 5vw;
+    width: 20vw;
+    height: 25vh;
+}
+
+.el:nth-of-type(6) .imageContainer {
+    top: 27.5vh;
+    left: -22.5vw;
+    width: 30vw;
+    height: 25vh;
+}
+
+.el:nth-of-type(7) .imageContainer {
+    top: 22.5vh;
+    left: 25vw;
+    width: 15vw;
+    height: 15vh;
+}
+
+@media (max-width: 767px) {
+    .container {
+        height: auto; /* Allow content to dictate height */
+    }
+
+    .sticky {
+        position: static; /* Remove sticky behavior */
+        height: auto; /* Allow content to dictate height */
+    }
+
+    .el {
+        position: static; /* Remove absolute positioning */
+        display: block; /* Stack elements vertically */
+        width: 100%;
+        height: auto; /* Allow image to dictate height */
+        margin-bottom: 20px; /* Add some space between images */
+    }
+
+    .imageContainer {
+        width: 90%; /* Make images take up more width */
+        height: auto; /* Allow image to dictate height */
+        margin: 0 auto; /* Center the image */
+        padding-top: 56.25%; /* 16:9 aspect ratio, adjust as needed */
+        position: relative;
         overflow: hidden;
+    }
+
+    .imageContainer img {
+        position: absolute;
         top: 0;
-        height: 100vh;
-        .el{
-            width: 100%;
-            height: 100%;
-            top: 0;
-            position: absolute;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            .imageContainer{
-                position: relative;
-                width: 25vw;
-                height: 25vh;
-                img{
-                    object-fit: cover;
-                }
-            }
-            &:nth-of-type(2){
-                .imageContainer{
-                    top: -30vh;
-                    left: 5vw;
-                    width: 35vw;
-                    height: 30vh;
-                }
-            }
-            &:nth-of-type(3){
-                .imageContainer{
-                    top: -10vh;
-                    left: -25vw;
-                    width: 20vw;
-                    height: 45vh;
-                }
-            }
-            &:nth-of-type(4){
-                .imageContainer{
-                    left: 27.5vw;
-                    width: 25vw;
-                    height: 25vh;
-                }
-            }
-            &:nth-of-type(5){
-                .imageContainer{
-                    top: 27.5vh;
-                    left: 5vw;
-                    width: 20vw;
-                    height: 25vh;
-                }
-            }
-            &:nth-of-type(6){
-                .imageContainer{
-                    top: 27.5vh;
-                    left: -22.5vw;
-                    width: 30vw;
-                    height: 25vh;
-                }
-            }
-            &:nth-of-type(7){
-                .imageContainer{
-                    top: 22.5vh;
-                    left: 25vw;
-                    width: 15vw;
-                    height: 15vh;
-                }
-            }
-        }
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Ensure the whole image is visible */
+    }
+
+    /* Reset specific positioning for smaller screens */
+    .el:nth-of-type(2) .imageContainer,
+    .el:nth-of-type(3) .imageContainer,
+    .el:nth-of-type(4) .imageContainer,
+    .el:nth-of-type(5) .imageContainer,
+    .el:nth-of-type(6) .imageContainer,
+    .el:nth-of-type(7) .imageContainer {
+        top: auto;
+        left: auto;
+        width: 90%; /* Ensure all images maintain the same width */
+        height: auto;
     }
 }
