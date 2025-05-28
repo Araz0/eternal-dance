@@ -2,8 +2,9 @@ import { PaintingCanvas } from '../components/PaintingCanvas'
 import About from '../components/About/About'
 import Footer from '../components/Footer/Footer'
 import ZoomParallaxImageGallery from '../components/ZoomParallaxImageGallery/ZoomParallaxImageGallery'
+import transition from '../transition'
 
-export const Home = () => {
+const Home = () => {
   return (  
     <>
       <PaintingCanvas />
@@ -13,3 +14,5 @@ export const Home = () => {
     </>
   )
 }
+
+export default transition(Home);

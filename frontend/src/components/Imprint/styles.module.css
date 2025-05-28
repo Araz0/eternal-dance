@@ -6,6 +6,7 @@
     min-height: fit-content;
     padding: 0 5%;
     margin-bottom: 10vh;
+    animation: fadeInUp 1s ease-out forwards;
 }
 
 h4 {
@@ -15,4 +16,16 @@ h4 {
 p {
     margin: 0;
     line-height: 150%
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

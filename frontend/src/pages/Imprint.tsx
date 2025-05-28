@@ -1,8 +1,9 @@
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import ImprintContent from "../components/Imprint/Imprint";
+import transition from "../transition";
 
-export const Imprint = () => {
+const Imprint = () => {
     return (
         <>
         <Header />
@@ -11,3 +12,5 @@ export const Imprint = () => {
     </>
     )
 }
+
+export default transition(Imprint);

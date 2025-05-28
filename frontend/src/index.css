@@ -12,6 +12,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 a {
   all: unset;
   cursor: pointer;
@@ -74,3 +75,25 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
+
+.slide-in {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: black;
+  transform-origin: bottom;
+  z-index: 1000;
+}
+
+.slide-out {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: black;
+  transform-origin: top;
+  z-index: 1000;
+}

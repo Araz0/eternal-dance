@@ -6,6 +6,7 @@ import {
   ReelsGallery,
 } from '../components/'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import transition from '../transition'
 
 const isMobileDevice = /Mobi|Android|iPhone|iPad|iPod/i.test(
   navigator.userAgent
@@ -17,7 +18,7 @@ export type FileItem = {
   thumbnail: string
 }
 
-export const Gallery = () => {
+const Gallery = () => {
   const [searchParams] = useSearchParams()
   const rawId = searchParams.get('id') // string | null
   const focusedId = rawId !== null ? +rawId : undefined // number | undefined
@@ -91,3 +92,5 @@ export const Gallery = () => {
     </>
   )
 }
+
+export default transition(Gallery)

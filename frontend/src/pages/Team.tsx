@@ -1,8 +1,9 @@
 import { PageContainer } from '../components'
 import TeamComponent from '../components/TeamComponent/TeamComponent'
 import Footer from '../components/Footer/Footer'
+import transition from '../transition'
 
-export const Team = () => {
+const Team = () => {
   return (  
     <PageContainer>    
         <TeamComponent />
@@ -10,3 +11,5 @@ export const Team = () => {
     </PageContainer>
   )
 }
+
+export default transition(Team)
