@@ -14,7 +14,7 @@ export function recordStream({ rtspUrl, duration, outputFile } = {}) {
     logger(`Recording started for ${duration} seconds`)
     exec(command, (error, stdout, stderr) => {
       if (error) {
-        console.error(`Recording error: ${error.message}`)
+        logger(`Recording error: ${error.message}`)
         resolve(-1)
         return
       }

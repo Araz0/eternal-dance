@@ -20,6 +20,7 @@ export class Highlighter {
     this.width = null
     this.height = null
     this.duration = null
+    this.noVideo = null
     this.initializeMetadata(videoPath)
   }
 
@@ -28,6 +29,11 @@ export class Highlighter {
    * @param {string} videoPath - The path to the video file.
    */
   async initializeMetadata(videoPath) {
+    if (!fs.existsSync(videoPath)) {
+      logger(`File not found, skipping metadata: ${videoPath}`)
+      this.noVideo = true
+      return null
+    }
     const { width, height, duration } = await this.getVideoMetadata(videoPath)
     this.width = width
 

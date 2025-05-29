@@ -47,12 +47,10 @@ export class Session {
     }
 
     this.recording = true
-    logger(
-      `Started recording with ${durationInSeconds} seconds from the startRecording method`
-    )
     this.id = id
-
-    console.log('## ~ Session ~ startRecording ~ this.id:', this.id)
+    logger(
+      `Started recording with ${durationInSeconds} seconds with the id ${this.id}`
+    )
 
     try {
       this.recordingPromise = recordStream({
@@ -69,12 +67,14 @@ export class Session {
 
       if (this.videoPath && this.videoPath !== -1) {
         const highlighter = new Highlighter(this.videoPath)
+        if (highlighter.noVideo) return
         try {
           const { reelVideo, thumbnail } = await highlighter.highlight(
             durationInSeconds
           )
           logger('Local paths:', { reelVideo, thumbnail })
 
+          if (!reelVideo) return
           logger('Uploading...')
           const onlineReelLink = await uploadVideo(reelVideo)
           logger('## ~ onlineReelLink:', onlineReelLink)
