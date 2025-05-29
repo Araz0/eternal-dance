@@ -87,7 +87,7 @@ function listUploadedFiles($directory)
         // Map video files
         foreach ($videoFiles as $video) {
             $fileName = pathinfo($video, PATHINFO_FILENAME); // e.g., "1744988986691_cropped"
-            if (preg_match('/^(\d+)_cropped$/', $fileName, $matches)) {
+            if (preg_match('/^(\d+)_reel$/', $fileName, $matches)) {
                 $id = $matches[1];
                 $relativePath = str_replace($_SERVER['DOCUMENT_ROOT'], '', realpath($video));
                 $fileMap[$id]['video'] = $basePath . $relativePath;
@@ -97,7 +97,7 @@ function listUploadedFiles($directory)
         // Map image files
         foreach ($imageFiles as $image) {
             $fileName = pathinfo($image, PATHINFO_FILENAME); // e.g., "1744988986691_croppedThumbnail"
-            if (preg_match('/^(\d+)_croppedThumbnail$/', $fileName, $matches)) {
+            if (preg_match('/^(\d+)_thumbnail$/', $fileName, $matches)) {
                 $id = $matches[1];
                 $relativePath = str_replace($_SERVER['DOCUMENT_ROOT'], '', realpath($image));
                 $fileMap[$id]['thumbnail'] = $basePath . $relativePath;
