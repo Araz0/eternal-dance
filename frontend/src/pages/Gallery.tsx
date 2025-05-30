@@ -21,7 +21,7 @@ export const Gallery = () => {
   const [searchParams] = useSearchParams()
   const rawId = searchParams.get('id') // string | null
   const focusedId = rawId !== null ? +rawId : undefined // number | undefined
-  console.log('##', focusedId)
+
   const [showOverlay, setShowOverlay] = useState(false)
   const [videoSrc, setVideoSrc] = useState<string | null>(null)
 
