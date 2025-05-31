@@ -30,6 +30,7 @@ const ReelsGalleryRaw = ({ reels, onItemClick }: ReelsGalleryProps) => {
       {reels.map((reel) => (
         <div key={reel.id} className={styles.reelItem}>
           <img
+            id={`thumbnail_id_${reel.id}`}
             src={reel.thumbnail}
             alt={`Thumbnail for reel ${reel.id}`}
             onClick={() => handleClick(reel.id)}

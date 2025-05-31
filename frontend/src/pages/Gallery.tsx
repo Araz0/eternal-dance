@@ -27,6 +27,7 @@ export const Gallery = () => {
 
   const [galleryData, setGalleryData] = useState<FileItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [showNotReady, setshowNotReady] = useState(true)
 
   useEffect(() => {
     const fetchGalleryData = async () => {
@@ -67,9 +68,25 @@ export const Gallery = () => {
     setVideoSrc(null)
   }, [])
 
+  useEffect(()=>{
+    if (!focusedId) return
+
+    const foundIndex = thumbnails.findIndex((thumbnail) =>
+      thumbnail.toLowerCase().includes(focusedId.toString())
+    )
+    if (foundIndex !== -1) {
+      setVideoSrc(memoizedItems[foundIndex].video)
+      setShowOverlay(true)
+    }else{
+      if (showNotReady){
+        alert('Your video is still being uploaded. please refresh your window in 10 seconds again')
+        setshowNotReady(false)
+      }
+    }
+  },[])
+
   return (
     <>
-      {/* <Header /> */}
       <PageContainer>
         {!loading &&
           (isMobileDevice ? (
