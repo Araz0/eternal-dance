@@ -19,7 +19,6 @@ const PaintingCanvasRaw: React.FC = () => {
   useEffect(() => {
     // Only initialize p5.js if not on a mobile device
     const isMobile = window.innerWidth <= 768; // You can adjust this breakpoint
-    console.log(window.innerWidth)
     if (isMobile) {
       return;
     }

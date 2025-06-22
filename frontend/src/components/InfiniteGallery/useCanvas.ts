@@ -14,6 +14,7 @@ export type UseCanvasProps = {
   showGridLines?: boolean // default false
   showGridIdentifiers?: boolean // default false
   randomizePlacement?: boolean // default true
+  lazyLoadTimer?: number
 }
 
 interface Bounds {
@@ -39,19 +40,18 @@ export function useCanvas({
   tileHeight = 400,
   tilePadding = 80,
   skipChance = 0.0,
-  minZoom = 0.5,
+  minZoom = 1,
   maxZoom = 2,
-  initialScale = 0.8,
+  initialScale = 1,
   showGridLines = true,
   showGridIdentifiers = true,
   randomizePlacement = false,
+  lazyLoadTimer= 250, 
 }: UseCanvasProps) {
   const thumbWidth = tileWidth - tilePadding
   const thumbHeight = tileHeight - tilePadding
 
-  // Ref to hold gallery items created on image load.
   const itemsRef = useRef<GalleryItem[]>([])
-  // Refs to handle panning/zooming.
   const scaleRef = useRef<number>(initialScale)
   const offsetXRef = useRef<number>(0)
   const offsetYRef = useRef<number>(0)
@@ -59,7 +59,6 @@ export function useCanvas({
   const startXRef = useRef<number>(0)
   const startYRef = useRef<number>(0)
 
-  // Draw the entire grid and images on the canvas.
   const drawGrid = useCallback(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -68,81 +67,52 @@ export function useCanvas({
     const { width, height } = canvas
     ctx.clearRect(0, 0, width, height)
 
-    // Compute grid dimensions.
     const cols = Math.ceil(width / (tileWidth * scaleRef.current)) + 2
     const rows = Math.ceil(height / (tileHeight * scaleRef.current)) + 2
-    const startCol = Math.floor(
-      -offsetXRef.current / (tileWidth * scaleRef.current)
-    )
-    const startRow = Math.floor(
-      -offsetYRef.current / (tileHeight * scaleRef.current)
-    )
+    const startCol = Math.floor(-offsetXRef.current / (tileWidth * scaleRef.current))
+    const startRow = Math.floor(-offsetYRef.current / (tileHeight * scaleRef.current))
 
-    // Fill background.
+    // background
     ctx.fillStyle = '#222'
     ctx.fillRect(0, 0, width, height)
 
-    // Draw grid cells.
+    // grid
     for (let row = startRow; row < startRow + rows; row++) {
       for (let col = startCol; col < startCol + cols; col++) {
         const x = col * tileWidth * scaleRef.current + offsetXRef.current
         const y = row * tileHeight * scaleRef.current + offsetYRef.current
         ctx.fillStyle = '#222'
-        ctx.fillRect(
-          x,
-          y,
-          tileWidth * scaleRef.current,
-          tileHeight * scaleRef.current
-        )
+        ctx.fillRect(x, y, tileWidth * scaleRef.current, tileHeight * scaleRef.current)
         if (showGridLines) {
           ctx.strokeStyle = '#555'
-          ctx.strokeRect(
-            x,
-            y,
-            tileWidth * scaleRef.current,
-            tileHeight * scaleRef.current
-          )
+          ctx.strokeRect(x, y, tileWidth * scaleRef.current, tileHeight * scaleRef.current)
         }
         if (showGridIdentifiers) {
           ctx.fillStyle = '#888'
           ctx.font = `${16 * scaleRef.current}px sans-serif`
-          ctx.fillText(
-            `(${col}, ${row})`,
-            x + 10 * scaleRef.current,
-            y + 25 * scaleRef.current
-          )
+          ctx.fillText(`(${col}, ${row})`, x + 10 * scaleRef.current, y + 25 * scaleRef.current)
         }
       }
     }
 
-    // Draw each thumbnail image at its computed center.
+    // thumbnails
     itemsRef.current.forEach((item) => {
       if (!item.thumbnail.complete || item.thumbnail.naturalWidth === 0) return
       const cellX = item.col * tileWidth * scaleRef.current + offsetXRef.current
-      const cellY =
-        item.row * tileHeight * scaleRef.current + offsetYRef.current
+      const cellY = item.row * tileHeight * scaleRef.current + offsetYRef.current
       const imgW = thumbWidth * scaleRef.current
       const imgH = thumbHeight * scaleRef.current
 
-      // Calculate a pseudo-random offset based on the item's index.
       const randomOffsetX = randomizePlacement
-        ? ((item.index % 10) - 5) *
-          (tileWidth * scaleRef.current * 0.02) *
-          (item.index % 2 === 0 ? 1 : -1)
+        ? ((item.index % 10) - 5) * (tileWidth * scaleRef.current * 0.02) * (item.index % 2 === 0 ? 1 : -1)
         : 0
       const randomOffsetY = randomizePlacement
-        ? ((item.index % 7) - 3) *
-          (tileHeight * scaleRef.current * 0.02) *
-          (item.index % 3 === 0 ? 1 : -1)
+        ? ((item.index % 7) - 3) * (tileHeight * scaleRef.current * 0.02) * (item.index % 3 === 0 ? 1 : -1)
         : 0
 
-      // Here we compute the drawn image's top-left position.
-      const centerX =
-        cellX + (tileWidth * scaleRef.current - imgW) / 2 + randomOffsetX
-      const centerY =
-        cellY + (tileHeight * scaleRef.current - imgH) / 2 + randomOffsetY
+      const centerX = cellX + (tileWidth * scaleRef.current - imgW) / 2 + randomOffsetX
+      const centerY = cellY + (tileHeight * scaleRef.current - imgH) / 2 + randomOffsetY
 
-      // Save the drawn image bounds.
       item._bounds = { x: centerX, y: centerY, w: imgW, h: imgH }
       try {
         ctx.drawImage(item.thumbnail, centerX, centerY, imgW, imgH)
@@ -161,31 +131,17 @@ export function useCanvas({
     randomizePlacement,
   ])
 
-  // Generate positions in a spiral layout with random skipping.
   const generateSpiralPositions = useCallback(
     (limit: number) => {
       const positions: { col: number; row: number }[] = []
-      let x = 0,
-        y = 0,
-        dx = 0,
-        dy = -1
+      let x = 0, y = 0, dx = 0, dy = -1
       const maxI = limit * limit
       for (let i = 0; i < maxI; i++) {
-        if (
-          x > -limit / 2 &&
-          x < limit / 2 &&
-          y > -limit / 2 &&
-          y < limit / 2
-        ) {
-          if (Math.random() > skipChance) {
-            positions.push({ col: x, row: y })
-          }
+        if (x > -limit/2 && x < limit/2 && y > -limit/2 && y < limit/2) {
+          if (Math.random() > skipChance) positions.push({ col: x, row: y })
         }
-        if (x === y || (x < 0 && x === -y) || (x > 0 && x === 1 - y)) {
-          ;[dx, dy] = [-dy, dx]
-        }
-        x += dx
-        y += dy
+        if (x === y || (x < 0 && x === -y) || (x > 0 && x === 1 - y)) [dx, dy] = [-dy, dx]
+        x += dx; y += dy
         if (positions.length >= thumbnails.length) break
       }
       return positions
@@ -193,60 +149,59 @@ export function useCanvas({
     [skipChance, thumbnails.length]
   )
 
-  // Load the thumbnail images from the provided URLs.
+  // ←——— NEW: sequential loader with 0.5s delay
   const loadThumbnails = useCallback(() => {
     const positions = generateSpiralPositions(20)
     const newItems: GalleryItem[] = []
-    let loadedCount = 0
-    thumbnails.forEach((src, i) => {
+    let index = 0
+
+    // clear any existing items
+    itemsRef.current = []
+
+    const loadNext = () => {
+      if (index >= thumbnails.length) {
+        // done
+        return
+      }
       const img = new Image()
-      img.src = src
+      img.src = thumbnails[index]
 
       img.onload = () => {
-        const pos = positions[i]
+        const pos = positions[index]
         if (pos) {
           newItems.push({
             thumbnail: img,
-            index: i,
+            index,
             col: pos.col,
             row: pos.row,
             _bounds: { x: 0, y: 0, w: 0, h: 0 },
           })
         }
-        loadedCount++
-        if (loadedCount === thumbnails.length) {
-          itemsRef.current = newItems
-          drawGrid()
-        }
+        itemsRef.current = [...newItems]
+        drawGrid()
+        index++
+        setTimeout(loadNext, lazyLoadTimer)
       }
 
       img.onerror = () => {
-        console.warn(`Thumbnail failed to load at index ${i}: ${src}`)
-        loadedCount++
-        if (loadedCount === thumbnails.length) {
-          itemsRef.current = newItems
-          drawGrid()
-        }
+        console.warn(`Thumbnail failed to load at index ${index}: ${thumbnails[index]}`)
+        index++
+        setTimeout(loadNext, lazyLoadTimer)
       }
-    })
+    }
+
+    loadNext()
   }, [generateSpiralPositions, thumbnails, drawGrid])
 
-  // When the canvas is clicked, find the clicked item and call the provided callback.
   const handleClick = useCallback(
     (x: number, y: number) => {
-      const clickedItem = itemsRef.current.find((item) => {
-        const { _bounds } = item
-        return (
-          _bounds &&
-          x >= _bounds.x &&
-          x <= _bounds.x + _bounds.w &&
-          y >= _bounds.y &&
-          y <= _bounds.y + _bounds.h
-        )
-      })
-      if (clickedItem) {
-        onItemClick(clickedItem.index)
-      }
+      const clicked = itemsRef.current.find(({ _bounds }) =>
+        x >= _bounds.x &&
+        x <= _bounds.x + _bounds.w &&
+        y >= _bounds.y &&
+        y <= _bounds.y + _bounds.h
+      )
+      if (clicked) onItemClick(clicked.index)
     },
     [onItemClick]
   )
@@ -299,9 +254,7 @@ export function useCanvas({
         const canvas = canvasRef.current
         if (!canvas) return
         const rect = canvas.getBoundingClientRect()
-        const x = e.clientX - rect.left
-        const y = e.clientY - rect.top
-        handleClick(x, y)
+        handleClick(e.clientX - rect.left, e.clientY - rect.top)
       }
     },
     [handleClick, canvasRef]
@@ -321,24 +274,14 @@ export function useCanvas({
     (index: number, targetScale: number = maxZoom) => {
       const canvas = canvasRef.current
       if (!canvas) return
-
-      // 1) clamp and set the new scale
       const clamped = Math.max(minZoom, Math.min(targetScale, maxZoom))
       scaleRef.current = clamped
-
-      // 2) find the item and compute its tile center in world coords
       const item = itemsRef.current.find((it) => it.index === index)
       if (!item) return
-      const tileCenterX =
-        item.col * tileWidth * clamped + (tileWidth * clamped) / 2
-      const tileCenterY =
-        item.row * tileHeight * clamped + (tileHeight * clamped) / 2
-
-      // 3) recalculate offsets so that tileCenterX,Y lands in the canvas center
+      const tileCenterX = item.col * tileWidth * clamped + (tileWidth * clamped) / 2
+      const tileCenterY = item.row * tileHeight * clamped + (tileHeight * clamped) / 2
       offsetXRef.current = canvas.width / 2 - tileCenterX
       offsetYRef.current = canvas.height / 2 - tileCenterY
-
-      // 4) redraw at the new zoom & offset
       drawGrid()
     },
     [canvasRef, drawGrid, tileWidth, tileHeight, minZoom, maxZoom]
