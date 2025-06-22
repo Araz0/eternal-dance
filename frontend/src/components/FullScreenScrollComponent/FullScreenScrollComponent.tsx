@@ -1,0 +1,151 @@
+// src/components/FullScreenScrollReveal.tsx
+import React from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import styles from "./styles.module.css";
+import { teamMembers } from "../../lib/data/teamMembers";
+
+export type TeamMember = {
+  id: number;
+  name: string;
+  description: string;
+  link: string;
+  roles: string[];
+  imageUrl: string;
+};
+
+const FullScreenScrollReveal: React.FC = () => {
+  const { scrollYProgress } = useScroll();
+
+  const scaleDuration = 0.06;
+  const textOpacityDuration = 0.06;
+  const pauseDuration = 0.08;
+  const totalPhaseDuration =
+    scaleDuration + textOpacityDuration + pauseDuration; // 0.2
+
+  // dynamically create useTransform values
+  const rectangles = teamMembers.map((data, index) => {
+    let scale, textOpacity;
+
+    if (index === 0) {
+      scale = useTransform(scrollYProgress, [-scaleDuration, 0], [0, 1]);
+      textOpacity = useTransform(
+        scrollYProgress,
+        [-textOpacityDuration, 0],
+        [0, 1]
+      );
+    } else {
+      // index 1 starts at 0.2, index 2 starts at 0.4 and so on
+      const currentItemAnimationStart = index * totalPhaseDuration;
+
+      scale = useTransform(
+        scrollYProgress,
+        [currentItemAnimationStart, currentItemAnimationStart + scaleDuration],
+        [0, 1]
+      );
+      textOpacity = useTransform(
+        scrollYProgress,
+        [
+          currentItemAnimationStart + scaleDuration,
+          currentItemAnimationStart + scaleDuration + textOpacityDuration,
+        ],
+        [0, 1]
+      );
+    }
+    return {
+      ...data,
+      scale,
+      textOpacity,
+      className: styles.scalingRectangle,
+      textColor: "white",
+    };
+  });
+
+  return (
+    <div className={styles.scrollRevealContainer}>
+      <div className={styles.scrollContent}>
+        {rectangles.map((rect) => (
+          <div key={rect.id} className={styles.rectangleContainer}>
+            <motion.div
+              className={rect.className}
+              style={{ scaleX: rect.scale, scaleY: rect.scale }}
+            ></motion.div>
+
+            <motion.div
+              className={styles.imageContainer}
+              style={{
+                scaleX: rect.scale,
+                scaleY: rect.scale,
+                opacity: rect.scale,
+              }}
+            >
+              <img
+                src={rect.imageUrl}
+                alt={`${rect.name}'s portrait`}
+                className={styles.rectangleImage}
+              />
+            </motion.div>
+
+            <motion.div
+              className={styles.name}
+              style={{
+                opacity: rect.textOpacity,
+                position: "fixed",
+                top: "2rem",
+                left: "2rem",
+                zIndex: 1000,
+              }}
+            >
+              {rect.name}
+            </motion.div>
+
+            <motion.div
+              className={styles.description}
+              style={{
+                opacity: rect.textOpacity,
+                position: "fixed",
+                bottom: "2rem",
+                left: "2rem",
+                zIndex: 1000,
+              }}
+            >
+              {rect.description}
+            </motion.div>
+
+            <motion.a
+              className={styles.link}
+              style={{
+                opacity: rect.textOpacity,
+                position: "fixed",
+                bottom: "2rem",
+                right: "2rem",
+                zIndex: 1000,
+              }}
+              href={rect.link}
+            >
+              Linkedin
+            </motion.a>
+
+            <motion.div
+              className={styles.rolesContainer}
+              style={{
+                opacity: rect.textOpacity,
+                position: "fixed",
+                top: "2rem",
+                right: "2rem",
+                zIndex: 1000,
+              }}
+            >
+              {rect.roles.map((role, roleIndex) => (
+                <span key={roleIndex} className={styles.role}>
+                  {role}
+                </span>
+              ))}
+            </motion.div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default FullScreenScrollReveal;
