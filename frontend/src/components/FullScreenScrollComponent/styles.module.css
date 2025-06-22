@@ -64,7 +64,6 @@
     text-align: left;
     z-index: 10;
     pointer-events: none;
-    white-space: nowrap;
     color: white;
 }
 
@@ -74,7 +73,6 @@
     text-align: left;
     z-index: 10;
     pointer-events: none;
-    white-space: nowrap;
     color: white;
 }
 

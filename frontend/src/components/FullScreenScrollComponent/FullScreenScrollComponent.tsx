@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import styles from "./styles.module.css";
 import { teamMembers } from "../../lib/data/teamMembers";
@@ -14,6 +14,19 @@ export type TeamMember = {
 
 const FullScreenScrollReveal: React.FC = () => {
   const { scrollYProgress } = useScroll();
+
+    const [isMobile, setIsMobile] = useState(false);
+  
+    useEffect(() => {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth <= 768);
+      };
+  
+      handleResize();
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
+  
 
   const scaleDuration = 0.04;
   const textOpacityDuration = 0.04;
@@ -92,6 +105,7 @@ const FullScreenScrollReveal: React.FC = () => {
                 top: "6rem",
                 left: "5%",
                 zIndex: 1000,
+                textShadow: '1px 1px 10px black',
               }}
             >
               {rect.name}
@@ -115,7 +129,7 @@ const FullScreenScrollReveal: React.FC = () => {
               style={{
                 opacity: rect.textOpacity,
                 position: "fixed",
-                bottom: "2rem",
+                bottom: isMobile ? "6rem" : "2rem",
                 right: "5%",
                 zIndex: 1000,
               }}
@@ -129,7 +143,9 @@ const FullScreenScrollReveal: React.FC = () => {
               style={{
                 opacity: rect.textOpacity,
                 position: "fixed",
-                top: "6rem",
+                top: isMobile ? undefined : "6rem",
+                bottom: isMobile ? "8rem" : undefined,
+                textShadow: '1px 1px 10px black',
                 right: "5%",
                 zIndex: 1000,
               }}
