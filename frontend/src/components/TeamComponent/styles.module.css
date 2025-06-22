@@ -26,6 +26,7 @@
   row-gap: 5vh;
   width: 100%;
   font-size: 1.2rem;
+  animation: fadeInUp 1s ease-out forwards;
 }
 
 .member {
@@ -82,7 +83,7 @@
   .preview {
     pointer-events: none;
     position: fixed;
-    width: 125px;
+    5width: 12px;
     height: 175px;
     background-size: cover;
     background-position: center;
@@ -95,4 +96,17 @@
     transform: scale(1.5) rotate(0deg);
     filter: blur(0px);
   }
+}
+
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

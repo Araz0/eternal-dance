@@ -4,7 +4,6 @@ import { useState } from "react";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  console.log(isMenuOpen);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

@@ -24,7 +24,7 @@ export default function ZoomParallaxImageGallery() {
 
   const pictures = [
     {
-      src: "./images/landing-page/image4.jpg",
+      src: "./images/landing-page/image7.jpg",
       scale: scale,
       alt: "Image 1 description",
     },
@@ -46,7 +46,7 @@ export default function ZoomParallaxImageGallery() {
       alt: "Image 4 description",
     },
     {
-      src: "./images/landing-page/image7.jpg",
+      src: "./images/landing-page/image4.jpg",
       scale: scale5,
       alt: "Image 5 description",
     },
