@@ -4,11 +4,12 @@ import styles from './style.module.css'
 
 type PageContainerProps = {
   children?: React.ReactNode
+  fixed?: boolean
 }
-const PageContainerRaw = ({ children }: PageContainerProps) => {
+const PageContainerRaw = ({ children, fixed }: PageContainerProps) => {
   return (
     <div className={styles.PageContainer}>
-      <div className={styles.navigationWrapper}>
+      <div className={fixed ? styles.navigationWrapperFixed : styles.navigationWrapper}>
         <Header />
       </div>
       {children}

@@ -1,11 +1,10 @@
 import { PageContainer } from '../components'
-import Footer from '../components/Footer/Footer'
-import transition from '../transition'
 import FullScreenScrollReveal from '../components/FullScreenScrollComponent/FullScreenScrollComponent'
+import transition from '../transition'
 
 const Team = () => {
   return (  
-    <PageContainer>    
+    <PageContainer fixed={true} >    
         <FullScreenScrollReveal />
     </PageContainer>
   )

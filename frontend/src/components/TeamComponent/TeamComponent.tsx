@@ -19,7 +19,7 @@ const TeamComponent = () => {
         style={{ 
           top: mousePosition.y - 150, 
           left: mousePosition.x + 50, 
-          backgroundImage: hoveredMember !== null ? `url(${teamMembers[hoveredMember].image})` : "none" 
+          backgroundImage: hoveredMember !== null ? `url(${teamMembers[hoveredMember].imageUrl})` : "none" 
         }}
       >
       </div>

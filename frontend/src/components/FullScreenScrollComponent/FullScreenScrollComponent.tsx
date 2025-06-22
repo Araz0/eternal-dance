@@ -1,4 +1,3 @@
-// src/components/FullScreenScrollReveal.tsx
 import React from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import styles from "./styles.module.css";
@@ -16,13 +15,12 @@ export type TeamMember = {
 const FullScreenScrollReveal: React.FC = () => {
   const { scrollYProgress } = useScroll();
 
-  const scaleDuration = 0.06;
-  const textOpacityDuration = 0.06;
-  const pauseDuration = 0.08;
+  const scaleDuration = 0.04;
+  const textOpacityDuration = 0.04;
+  const pauseDuration = 0.06;
   const totalPhaseDuration =
-    scaleDuration + textOpacityDuration + pauseDuration; // 0.2
+    scaleDuration + textOpacityDuration + pauseDuration; // 0.14
 
-  // dynamically create useTransform values
   const rectangles = teamMembers.map((data, index) => {
     let scale, textOpacity;
 
@@ -34,7 +32,6 @@ const FullScreenScrollReveal: React.FC = () => {
         [0, 1]
       );
     } else {
-      // index 1 starts at 0.2, index 2 starts at 0.4 and so on
       const currentItemAnimationStart = index * totalPhaseDuration;
 
       scale = useTransform(
@@ -51,6 +48,7 @@ const FullScreenScrollReveal: React.FC = () => {
         [0, 1]
       );
     }
+
     return {
       ...data,
       scale,
@@ -59,6 +57,7 @@ const FullScreenScrollReveal: React.FC = () => {
       textColor: "white",
     };
   });
+
 
   return (
     <div className={styles.scrollRevealContainer}>
@@ -90,8 +89,8 @@ const FullScreenScrollReveal: React.FC = () => {
               style={{
                 opacity: rect.textOpacity,
                 position: "fixed",
-                top: "2rem",
-                left: "2rem",
+                top: "6rem",
+                left: "5%",
                 zIndex: 1000,
               }}
             >
@@ -104,7 +103,7 @@ const FullScreenScrollReveal: React.FC = () => {
                 opacity: rect.textOpacity,
                 position: "fixed",
                 bottom: "2rem",
-                left: "2rem",
+                left: "5%",
                 zIndex: 1000,
               }}
             >
@@ -117,7 +116,7 @@ const FullScreenScrollReveal: React.FC = () => {
                 opacity: rect.textOpacity,
                 position: "fixed",
                 bottom: "2rem",
-                right: "2rem",
+                right: "5%",
                 zIndex: 1000,
               }}
               href={rect.link}
@@ -130,8 +129,8 @@ const FullScreenScrollReveal: React.FC = () => {
               style={{
                 opacity: rect.textOpacity,
                 position: "fixed",
-                top: "2rem",
-                right: "2rem",
+                top: "6rem",
+                right: "5%",
                 zIndex: 1000,
               }}
             >
